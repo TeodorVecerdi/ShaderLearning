@@ -1,0 +1,133 @@
+#ToolbarContainerContent {
+  background-color: #191919;
+}
+#ToolbarContainerContent #ToolbarZoneLeftAlign BuiltinToolsStrip {
+  margin-right: 3px;
+  height: 20px;
+}
+#ToolbarContainerContent #ToolbarZoneLeftAlign BuiltinToolsStrip ToolButton, #ToolbarContainerContent #ToolbarZoneLeftAlign BuiltinToolsStrip LastCustomToolButton {
+  border-radius: 0;
+  border-width: 0;
+  border-left-width: 1px;
+  margin-left: 0;
+  padding-left: 5px;
+  padding-right: 5px;
+  background-color: #262626;
+  border-color: #262626;
+  margin-right: 1px;
+}
+#ToolbarContainerContent #ToolbarZoneLeftAlign BuiltinToolsStrip ToolButton > VisualElement, #ToolbarContainerContent #ToolbarZoneLeftAlign BuiltinToolsStrip LastCustomToolButton > VisualElement {
+  -unity-background-image-tint-color: rgba(255, 255, 255, 0.75);
+}
+#ToolbarContainerContent #ToolbarZoneLeftAlign BuiltinToolsStrip ToolButton:checked, #ToolbarContainerContent #ToolbarZoneLeftAlign BuiltinToolsStrip ToolButton:checked:hover, #ToolbarContainerContent #ToolbarZoneLeftAlign BuiltinToolsStrip LastCustomToolButton:checked, #ToolbarContainerContent #ToolbarZoneLeftAlign BuiltinToolsStrip LastCustomToolButton:checked:hover {
+  background-color: #0642a5;
+  border-color: #0642a5;
+}
+#ToolbarContainerContent #ToolbarZoneLeftAlign BuiltinToolsStrip ToolButton:checked > VisualElement, #ToolbarContainerContent #ToolbarZoneLeftAlign BuiltinToolsStrip ToolButton:checked:hover > VisualElement, #ToolbarContainerContent #ToolbarZoneLeftAlign BuiltinToolsStrip LastCustomToolButton:checked > VisualElement, #ToolbarContainerContent #ToolbarZoneLeftAlign BuiltinToolsStrip LastCustomToolButton:checked:hover > VisualElement {
+  -unity-background-image-tint-color: white;
+}
+#ToolbarContainerContent #ToolbarZoneLeftAlign BuiltinToolsStrip ToolButton:active:hover, #ToolbarContainerContent #ToolbarZoneLeftAlign BuiltinToolsStrip LastCustomToolButton:active:hover {
+  background-color: #0642a5;
+  border-color: #0642a5;
+}
+#ToolbarContainerContent #ToolbarZoneLeftAlign BuiltinToolsStrip ToolButton:active:hover > VisualElement, #ToolbarContainerContent #ToolbarZoneLeftAlign BuiltinToolsStrip LastCustomToolButton:active:hover > VisualElement {
+  -unity-background-image-tint-color: white;
+}
+#ToolbarContainerContent #ToolbarZoneLeftAlign BuiltinToolsStrip ToolButton:hover, #ToolbarContainerContent #ToolbarZoneLeftAlign BuiltinToolsStrip LastCustomToolButton:hover {
+  background-color: #404040;
+  border-color: #404040;
+}
+#ToolbarContainerContent #ToolbarZoneLeftAlign BuiltinToolsStrip ToolButton:hover > VisualElement, #ToolbarContainerContent #ToolbarZoneLeftAlign BuiltinToolsStrip LastCustomToolButton:hover > VisualElement {
+  -unity-background-image-tint-color: white;
+}
+#ToolbarContainerContent #ToolbarZoneLeftAlign ActiveToolSettings {
+  height: 20px;
+  margin-right: 0;
+}
+#ToolbarContainerContent #ToolbarZoneLeftAlign ActiveToolSettings EditorToolbarCycleButton {
+  border-radius: 0;
+  border-width: 1px;
+  background-color: #262626;
+  border-color: #262626;
+  margin-left: 1px;
+  min-width: 80px;
+}
+#ToolbarContainerContent #ToolbarZoneLeftAlign ActiveToolSettings EditorToolbarCycleButton:hover {
+  background-color: #404040;
+  border-color: #404040;
+}
+#ToolbarContainerContent #ToolbarZoneLeftAlign ActiveToolSettings EditorToolbarCycleButton:active {
+  background-color: #0642a5;
+  border-color: #0642a5;
+}
+#ToolbarContainerContent #ToolbarZoneLeftAlign ActiveToolSettings EditorToolbarCycleButton > .unity-editor-toolbar-element__icon {
+  margin-right: 4px;
+}
+#ToolbarContainerContent #ToolbarZoneLeftAlign SnapSettings {
+  margin-left: 2px;
+}
+#ToolbarContainerContent #ToolbarZoneLeftAlign SnapSettings EditorToolbarToggle {
+  border-radius: 0;
+  border-width: 1px;
+  background-color: #262626;
+  border-color: #262626;
+  margin-left: 1px;
+}
+#ToolbarContainerContent #ToolbarZoneLeftAlign SnapSettings EditorToolbarToggle:hover {
+  background-color: #404040;
+  border-color: #404040;
+}
+#ToolbarContainerContent #ToolbarZoneLeftAlign SnapSettings EditorToolbarToggle:active, #ToolbarContainerContent #ToolbarZoneLeftAlign SnapSettings EditorToolbarToggle:checked {
+  background-color: #0642a5;
+  border-color: #0642a5;
+}
+#ToolbarContainerContent #ToolbarZoneLeftAlign SnapSettings EditorToolbarToggle:disabled {
+  background-color: #191919;
+  border-color: #191919;
+}
+#ToolbarContainerContent #ToolbarZonePlayMode PlayModeButtons EditorToolbarToggle, #ToolbarContainerContent #ToolbarZonePlayMode PlayModeButtons ToolbarButton {
+  border-radius: 0;
+  border-width: 1px;
+  background-color: #262626;
+  border-color: #262626;
+  margin-left: 1px;
+}
+#ToolbarContainerContent #ToolbarZonePlayMode PlayModeButtons EditorToolbarToggle:hover, #ToolbarContainerContent #ToolbarZonePlayMode PlayModeButtons ToolbarButton:hover {
+  background-color: #404040;
+  border-color: #404040;
+}
+#ToolbarContainerContent #ToolbarZonePlayMode PlayModeButtons EditorToolbarToggle:active, #ToolbarContainerContent #ToolbarZonePlayMode PlayModeButtons EditorToolbarToggle:checked, #ToolbarContainerContent #ToolbarZonePlayMode PlayModeButtons ToolbarButton:active, #ToolbarContainerContent #ToolbarZonePlayMode PlayModeButtons ToolbarButton:checked {
+  background-color: #0642a5;
+  border-color: #0642a5;
+}
+#ToolbarContainerContent #ToolbarZonePlayMode PlayModeButtons EditorToolbarToggle:disabled, #ToolbarContainerContent #ToolbarZonePlayMode PlayModeButtons ToolbarButton:disabled {
+  background-color: #191919;
+  border-color: #191919;
+}
+#ToolbarContainerContent #ToolbarZoneRightAlign SearchButton {
+  margin-right: 0;
+}
+#ToolbarContainerContent #ToolbarZoneRightAlign MainToolbarImguiContainer {
+  top: -1px;
+}
+#ToolbarContainerContent #ToolbarZoneRightAlign .unity-toolbar-button.unity-editor-toolbar-element {
+  border-radius: 0;
+  border-width: 1px;
+  background-color: #262626;
+  border-color: #262626;
+  margin-left: 1px;
+}
+#ToolbarContainerContent #ToolbarZoneRightAlign .unity-toolbar-button.unity-editor-toolbar-element:hover {
+  background-color: #404040;
+  border-color: #404040;
+}
+#ToolbarContainerContent #ToolbarZoneRightAlign .unity-toolbar-button.unity-editor-toolbar-element:active, #ToolbarContainerContent #ToolbarZoneRightAlign .unity-toolbar-button.unity-editor-toolbar-element:checked {
+  background-color: #0642a5;
+  border-color: #0642a5;
+}
+#ToolbarContainerContent #ToolbarZoneRightAlign .unity-toolbar-button.unity-editor-toolbar-element:disabled {
+  background-color: #191919;
+  border-color: #191919;
+}
+
+/*# sourceMappingURL=CustomToolbar.uss.map */

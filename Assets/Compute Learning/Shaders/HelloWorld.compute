@@ -5,5 +5,5 @@ float Resolution;
 
 [numthreads(8,8,1)]
 void CSMain (uint3 id : SV_DispatchThreadID){
-    Result[id.xy] = float4(id.x / Resolution, id.y / Resolution, 1.0, 0.0);
+    Result[id.xy] = float4((float)id.x / Resolution, (float)id.y / Resolution, 0.0, 1.0);
 }

@@ -1,0 +1,16 @@
+#pragma kernel CSMain
+
+RWTexture2D<float4> Result;
+float Resolution;
+float4 PositionNormalized;
+float4 SizeNormalized;
+
+[numthreads(8,8,1)]
+void CSMain (uint3 id : SV_DispatchThreadID){
+    float2 pos = id.xy / Resolution; // local normalized position (kind of like UV space)
+    pos *= SizeNormalized.xy; // resized to actual screen size
+    pos += PositionNormalized.zw; //xy => mouse normalized, zw => object pos normalized
+
+    float dist = distance(pos, PositionNormalized.xy);
+    Result[id.xy] = float4(dist,dist,dist,1);
+}
