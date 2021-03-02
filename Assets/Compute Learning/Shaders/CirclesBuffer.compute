@@ -1,0 +1,39 @@
+#pragma exclude_renderers d3d11_9x
+#pragma exclude_renderers d3d9
+
+#define MAX_CIRCLES 1024
+
+#pragma kernel CSMain
+
+#include "Utils/Math.cginc"
+
+struct Circle {
+	float3 Position; //xy => position, z => radius
+	float4 Color;
+};
+
+RWTexture2D<float4> Result;
+float Resolution;
+
+float WorldSize = 10.0;
+StructuredBuffer<Circle> Circles;
+int CircleCount = 0;
+
+void DrawCircle(uint2 screen, float2 position, float radius, float4 circleColor, inout float4 color) {
+	const float value = 1 - floor(SqrDistance(screen, position) - radius * radius);
+	if (value > 0) color = circleColor;
+}
+
+[numthreads(8,8,1)]
+void CSMain(uint3 id : SV_DispatchThreadID) {
+	float4 color = float4(0, 0, 0, 1);
+
+	const int maxCircles = min(CircleCount, MAX_CIRCLES);
+	for (int i = 0; i < maxCircles; i++) {
+		const float2 circlePos = WorldToLocal(Circles[i].Position.xy, WorldSize);
+		const float circleRadius = WorldToLocal(Circles[i].Position.z, WorldSize);
+		DrawCircle(id.xy, circlePos, circleRadius, Circles[i].Color, color);
+	}
+
+	Result[id.xy] = color;
+}
