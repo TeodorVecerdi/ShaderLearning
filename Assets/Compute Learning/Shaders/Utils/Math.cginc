@@ -5,6 +5,14 @@ float SqrDistance(float2 a, float2 b) {
 	return (b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y);
 }
 
+float SqrDistance(float3 a, float3 b) {
+	return (b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y) + (b.z - a.z) * (b.z - a.z);
+}
+
+float SqrDistance(float4 a, float4 b) {
+	return (b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y) + (b.z - a.z) * (b.z - a.z) + (b.w - a.w) * (b.w - a.w);
+}
+
 float2 WorldToLocal(float2 local, float worldSize) {
 	return local * worldSize;
 }

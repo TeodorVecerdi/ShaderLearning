@@ -1,0 +1,15 @@
+#pragma kernel CSMain
+RWTexture2D<float4> Src;
+RWTexture2D<float4> Dst;
+int DownSampling;
+
+[numthreads(8,8,1)]
+void CSMain(uint3 id : SV_DispatchThreadID) {
+	float4 color = 0;
+	for (int x = 0; x < DownSampling; x++) {
+		for (int y = 0; y < DownSampling; y++) {
+			color += Src[id.xy * DownSampling + uint2(x,y)];
+		}
+	}
+	Dst[id.xy] = color / (DownSampling * DownSampling);
+}

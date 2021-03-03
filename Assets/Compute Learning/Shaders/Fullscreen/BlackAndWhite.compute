@@ -1,0 +1,9 @@
+#pragma kernel CSMain
+RWTexture2D<float4> Result;
+
+[numthreads(8,8,1)]
+void CSMain(uint3 id : SV_DispatchThreadID) {
+	float4 color = Result[id.xy];
+	color.xyz = (color.x + color.y + color.z) / 3.0;
+	Result[id.xy] = color;
+}

@@ -1,7 +1,7 @@
 #pragma kernel CSMain
 
-#include "Utils/Random.cginc"
-#include "Utils/Math.cginc"
+#include "../Utils/Random.cginc"
+#include "../Utils/Math.cginc"
 #define MAX_CIRCLES 1024
 
 struct Circle {

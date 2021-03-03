@@ -1,6 +1,6 @@
 #pragma kernel CSMain
 
-#include "Utils/Math.cginc"
+#include "../Utils/Math.cginc"
 
 RWTexture2D<float4> Result;
 float Resolution;

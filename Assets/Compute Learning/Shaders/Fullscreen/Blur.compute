@@ -1,0 +1,31 @@
+#pragma kernel CSMain
+
+#include "../Utils/Math.cginc"
+
+RWTexture2D<float4> Result;
+RWTexture2D<float4> Blur;
+Buffer<float> Kernel;
+uint KernelSize;
+
+int Width;
+int Height;
+static int2 Size = int2(Width, Height);
+
+float4 KernelValue(uint2 current, uint2 kernelIdx) {
+	uint2 textureIndex = clamp(current + kernelIdx, 0, Size);
+	int kernelIndex = kernelIdx.x + KernelSize / 2 + (kernelIdx.y + KernelSize / 2) * KernelSize;
+	return Kernel[kernelIndex] * Result[textureIndex];
+}
+
+[numthreads(8,8,1)]
+void CSMain(uint3 id : SV_DispatchThreadID) {
+	float4 color = 0;
+	int kernelHalfSize = KernelSize / 2;
+	for (int y = -kernelHalfSize; y <= kernelHalfSize; y++) {
+		for (int x = -kernelHalfSize; x <= kernelHalfSize; x++) {
+			color += KernelValue(id.xy, uint2(x, y));
+		}
+	}
+	// color.a = 1;
+	Blur[id.xy] = color;
+}
