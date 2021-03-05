@@ -1,0 +1,19 @@
+#pragma kernel CSMain
+#include <HLSLSupport.cginc>
+
+Texture2D Src;
+SamplerState samplerSrc;
+RWTexture2D<float4> Dst;
+
+uint DstWidth;
+uint DstHeight;
+static uint2 Size = uint2(DstWidth, DstHeight); 
+
+
+[numthreads(16,16,1)]
+void CSMain(uint3 id : SV_DispatchThreadID) {
+	return; 
+	Dst[id.xy] = float4(Src.SampleLevel (samplerSrc, float2(id.xy)/Size, 0).bgra);
+	// Dst[id.xy] = Src.SampleLevel(samplerLinearMirrorSrc, float2(id.xy)/float2(Size), 0);
+	// Dst[id.xy] = Src[id.xy*4];
+}

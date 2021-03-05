@@ -259,13 +259,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 440e3eff5f754962b0f794a3af8e338b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Shader: {fileID: 7200000, guid: b4e0233c5e8c4a0d8e069ccaac91512d, type: 3}
-  TargetImage: {fileID: 336117541}
+  RenderTime: 0
+  Active: 0
+  TargetDisplay: {fileID: 336117541}
+  SourceRenderer: {fileID: 133192809}
+  ComputeShader: {fileID: 7200000, guid: b4e0233c5e8c4a0d8e069ccaac91512d, type: 3}
   Resolution: {x: 2048, y: 1024, z: 32}
-  DispatchGroupSize: {x: 8, y: 8, z: 1}
-  DurationMs: 0
-  Source: {fileID: 133192809}
-  Active: 1
+  ThreadGroupSize: {x: 8, y: 8}
 --- !u!4 &151772889
 Transform:
   m_ObjectHideFlags: 0
@@ -323,13 +323,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 440e3eff5f754962b0f794a3af8e338b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Shader: {fileID: 7200000, guid: 7b4986e7c24ca5949bed7fad565a1d83, type: 3}
-  TargetImage: {fileID: 336117541}
-  Resolution: {x: 2048, y: 1024, z: 32}
-  DispatchGroupSize: {x: 8, y: 8, z: 1}
-  DurationMs: 0
-  Source: {fileID: 133192809}
+  RenderTime: 0
   Active: 0
+  TargetDisplay: {fileID: 336117541}
+  SourceRenderer: {fileID: 133192809}
+  ComputeShader: {fileID: 7200000, guid: 7b4986e7c24ca5949bed7fad565a1d83, type: 3}
+  Resolution: {x: 2048, y: 1024, z: 32}
+  ThreadGroupSize: {x: 8, y: 8}
 --- !u!1 &276419989
 GameObject:
   m_ObjectHideFlags: 0
@@ -635,13 +635,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 596c1367f8e06d741a2f4367deb339b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Shader: {fileID: 7200000, guid: 0e11cd679e604820b78147d7587d3e64, type: 3}
-  TargetImage: {fileID: 336117541}
-  Resolution: {x: 8192, y: 4096, z: 32}
-  DispatchGroupSize: {x: 8, y: 8, z: 1}
-  DurationMs: 0
-  Source: {fileID: 133192809}
+  RenderTime: 0
   Active: 0
+  TargetDisplay: {fileID: 336117541}
+  SourceRenderer: {fileID: 133192809}
+  ComputeShader: {fileID: 7200000, guid: 0e11cd679e604820b78147d7587d3e64, type: 3}
+  Resolution: {x: 8192, y: 4096, z: 32}
+  ThreadGroupSize: {x: 8, y: 8}
   CopyShader: {fileID: 7200000, guid: c315f96d44f94b59babd57a70c3acee2, type: 3}
   EdgeColor: {r: 0, g: 0, b: 0, a: 1}
   LookupDistance: 3
@@ -1348,7 +1348,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1061910083}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3.5300007, y: 1.06, z: -0.88}
+  m_LocalPosition: {x: -3.5300007, y: 1.54, z: -0.88}
   m_LocalScale: {x: 1.9766552, y: 1.9766552, z: 1.9766552}
   m_Children: []
   m_Father: {fileID: 714675436}
@@ -1497,18 +1497,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 821a0df9b04c40b595c5fc2a0a9c9eb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Shader: {fileID: 7200000, guid: c6342bf4dcba485b9cdbc027efbcc038, type: 3}
-  TargetImage: {fileID: 336117541}
-  Resolution: {x: 256, y: 128, z: 32}
-  DispatchGroupSize: {x: 8, y: 8, z: 1}
-  DurationMs: 0
-  Source: {fileID: 133192809}
-  Active: 0
-  CopyShader: {fileID: 7200000, guid: c315f96d44f94b59babd57a70c3acee2, type: 3}
-  DownSampleShader: {fileID: 7200000, guid: c20bf7562e7d4d57b92fbbfec26872df, type: 3}
-  UpSampleShader: {fileID: 7200000, guid: 18ec2775d33f42f7892635465ec181d1, type: 3}
+  RenderTime: 0
+  Active: 1
+  TargetDisplay: {fileID: 336117541}
+  SourceRenderer: {fileID: 133192809}
+  ComputeShader: {fileID: 7200000, guid: c6342bf4dcba485b9cdbc027efbcc038, type: 3}
+  Resolution: {x: 2048, y: 1024, z: 32}
+  ThreadGroupSize: {x: 8, y: 8}
   KernelSize: 9
-  BlurAmount: 10
+  BlurAmount: 5
+  DownSamplingPower: 4
+  kernel: []
 --- !u!1 &1290052925
 GameObject:
   m_ObjectHideFlags: 0
@@ -1754,7 +1753,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 1.99
+  orthographic size: 3.11
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -1777,8 +1776,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1687258581}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.04, y: 1.203, z: -3.09}
+  m_LocalRotation: {x: -0.04828386, y: 0.017076213, z: -0.00082668924, w: -0.9986873}
+  m_LocalPosition: {x: 0, y: 1.9727333, z: -17.795906}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

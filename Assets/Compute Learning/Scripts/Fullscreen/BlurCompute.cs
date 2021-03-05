@@ -1,84 +1,75 @@
-﻿using NaughtyAttributes;
+﻿using System;
+using NaughtyAttributes;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class BlurCompute : ComputeRunner2 {
-    [Space(20)] public ComputeShader CopyShader;
-    public ComputeShader DownSampleShader;
-    public ComputeShader UpSampleShader;
+public class BlurCompute : ComputeRunner3 {
+    [Space]
     [OnValueChanged("KernelDirty")] public int KernelSize = 5;
     [OnValueChanged("KernelDirty")] public float BlurAmount = 2;
-    // [Range(1, 4), OnValueChanged("DownSampleDirty")] public int DownSamplingPower = 3;
+    [Range(0, 5)] public int DownSamplingPower = 3;
 
     private RenderTexture blurTexture;
-    private RenderTexture downSampleTexture;
-    private float[] kernel;
+    [SerializeField] private float[] kernel;
     private ComputeBuffer kernelBuffer;
     private bool kernelDirty = true;
     private float sigma;
 
     protected override void OnAwake() {
-        if (blurTexture == null) MakeTextureFromDesc(ref blurTexture, RenderTexture.descriptor);
+        var downSampleLevel = 1 << DownSamplingPower;
+        var downSampleResolution = resolution / downSampleLevel;
+        downSampleResolution.z = 32;
+        MakeTexture(ref blurTexture, downSampleResolution, RenderTextureFormat.Default);
+        blurTexture.filterMode = FilterMode.Bilinear;
     }
 
-    protected override void OnCleanup() {
+    protected override void OnFreeResources() {
         if (blurTexture != null) blurTexture.Release();
-        if (downSampleTexture != null) downSampleTexture.Release();
         if (kernelBuffer != null) kernelBuffer.Release();
     }
 
-    protected override void OnBeforeRender() {
+    /*protected override void OnEnableShader() {
+        if (TargetDisplay == null) TargetDisplay = GetComponent<RawImage>();
+        if (TargetDisplay != null) TargetDisplay.texture = blurTexture;
+    }*/
+
+    protected override Vector3Int GetDispatchSize() {
+        var downSampleLevel = 1 << DownSamplingPower;
+        var downSampleResolution = resolution / downSampleLevel;
+        downSampleResolution.x /= threadGroupSize.x;
+        downSampleResolution.y /= threadGroupSize.y;
+        downSampleResolution.z = 1;
+        return downSampleResolution;
+    }
+
+    protected override void OnBeforeRender(Action beforeRenderComplete) {
         if (kernelDirty) {
             kernelDirty = false;
+            ParametersDirty = true;
             GenerateKernel();
-            GenerateKernelBuffer();
+            MakeBuffer(ref kernelBuffer, KernelSize * KernelSize, sizeof(float), kernel);
         }
+        beforeRenderComplete();
     }
 
-    protected override void OnAfterRender() {
-        var kernelID = CopyShader.FindKernel("CSMain");
-        CopyShader.SetTexture(kernelID, "Src", blurTexture);
-        CopyShader.SetTexture(kernelID, "Dst", RenderTexture);
-        CopyShader.Dispatch(kernelID, Resolution.x / 8, Resolution.y / 8, 1);
+    protected override void OnAfterRender(Action afterRenderComplete) {
+        var downSampleLevel = 1 << DownSamplingPower;
+        var downSampleScale = Vector2.one * downSampleLevel;
+        Graphics.Blit(blurTexture, WorkingTexture);
+        afterRenderComplete();
     }
-    
 
     protected override void SetParameters(int kernelID, ComputeShader shader) {
-        shader.SetInt("Width", Resolution.x);
-        shader.SetInt("Height", Resolution.y);
+        var downSampleLevel = 1 << DownSamplingPower;
+        var downSampleResolution = resolution / downSampleLevel;
+        shader.SetInt("Width", downSampleResolution.x);
+        shader.SetInt("Height", downSampleResolution.y);
         shader.SetInt("KernelSize", KernelSize);
-        shader.SetBuffer(kernelID, "Kernel", kernelBuffer);
         shader.SetTexture(kernelID, "Blur", blurTexture);
+        shader.SetBuffer(kernelID, "Kernel", kernelBuffer);
     }
 
-    /*
-    private void DownSample() {
-        if(downSampleTexture == null) DownSampleDirty();
-        var kernelID = DownSampleShader.FindKernel("CSMain");
-        var downSampling = 1 << DownSamplingPower;
-        var resolutionX = Resolution.x / downSampling;
-        var resolutionY = Resolution.y / downSampling;
-        DownSampleShader.SetInt("DownSampling", downSampling);
-        DownSampleShader.SetTexture(kernelID, "Src", RenderTexture);
-        DownSampleShader.SetTexture(kernelID, "Dst", downSampleTexture);
-        DownSampleShader.Dispatch(kernelID, resolutionX / 8, resolutionY / 8, 1);
-    }
-
-    private void UpSample() {
-        var kernelID = UpSampleShader.FindKernel("CSMain");
-        var downSampling = 1 << DownSamplingPower;
-        var resolutionX = Resolution.x / downSampling;
-        var resolutionY = Resolution.y / downSampling;
-        UpSampleShader.SetInt("UpSampling", downSampling);
-        UpSampleShader.SetTexture(kernelID, "Src", downSampleTexture);
-        UpSampleShader.SetTexture(kernelID, "Dst", blurTexture);
-        UpSampleShader.Dispatch(kernelID, resolutionX / 8, resolutionY / 8, 1);
-    }
-    */
-
-    private void GenerateKernelBuffer() {
-        if (kernelBuffer != null) kernelBuffer.Release();
-        kernelBuffer = new ComputeBuffer(KernelSize * KernelSize, sizeof(float));
-        kernelBuffer.SetData(kernel);
+    protected override void SetParametersOnce(int kernelID, ComputeShader shader) {
     }
 
     private float GetSigma() {
@@ -112,17 +103,4 @@ public class BlurCompute : ComputeRunner2 {
     private void KernelDirty() {
         kernelDirty = true;
     }
-
-    /*private void DownSampleDirty() {
-        if (downSampleTexture != null) downSampleTexture.Release();
-        if (blurDownSampleTexture != null) blurDownSampleTexture.Release();
-        
-        var downsampling = 1 << DownSamplingPower;
-        downSampleTexture = new RenderTexture(Resolution.x / downsampling, Resolution.y / downsampling, 32);
-        downSampleTexture.enableRandomWrite = true;
-        downSampleTexture.Create();
-        blurDownSampleTexture = new RenderTexture(Resolution.x / downsampling, Resolution.y / downsampling, 32);
-        blurDownSampleTexture.enableRandomWrite = true;
-        blurDownSampleTexture.Create();
-    }*/
 }

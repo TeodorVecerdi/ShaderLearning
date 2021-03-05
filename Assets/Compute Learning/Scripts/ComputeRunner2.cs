@@ -6,11 +6,11 @@ using UnityEngine.UI;
 
 public abstract class ComputeRunner2 : MonoBehaviour {
     public ComputeShader Shader;
-    [SerializeField] private RawImage TargetImage;
+    [SerializeField] protected RawImage TargetImage;
     [SerializeField] protected Vector3Int Resolution = new Vector3Int(2048, 1024, 32);
     [SerializeField] protected Vector3Int DispatchGroupSize = new Vector3Int(8, 8, 1);
     [ReadOnly] public double DurationMs;
-    [SerializeField] private Camera Source;
+    [SerializeField] protected Camera Source;
     [ReadOnly] public bool Active;
 
     protected RenderTexture RenderTexture;
@@ -20,16 +20,15 @@ public abstract class ComputeRunner2 : MonoBehaviour {
     public void SetActive(bool newActive) {
         if(newActive == Active) return;
         Active = newActive;
-
+        
         if (!Active && Source != null) Source.targetTexture = null;
-        if (!Active) return;
+        if (!Active) {
+            OnDisableShader();
+            return;
+        }
 
         if (RenderTexture != null && Source != null) Source.targetTexture = RenderTexture;
-        if (TargetImage == null)
-            TargetImage = GetComponent<RawImage>();
-
-        if (TargetImage != null)
-            TargetImage.texture = RenderTexture;
+        OnEnableShader();
     }
 
     private void Awake() {
@@ -37,11 +36,7 @@ public abstract class ComputeRunner2 : MonoBehaviour {
 
         if (Active) {
             Source.targetTexture = RenderTexture;
-            if (TargetImage == null)
-                TargetImage = GetComponent<RawImage>();
-
-            if (TargetImage != null)
-                TargetImage.texture = RenderTexture;
+            OnEnableShader();
         }
 
         resolutionX = Resolution.x;
@@ -53,6 +48,15 @@ public abstract class ComputeRunner2 : MonoBehaviour {
     private void Start() {
         OnStart();
     }
+
+    protected virtual void OnEnableShader() {
+        if (TargetImage == null)
+            TargetImage = GetComponent<RawImage>();
+
+        if (TargetImage != null)
+            TargetImage.texture = RenderTexture;
+    }
+    protected virtual void OnDisableShader() {}
 
     protected virtual void OnAwake() {
     }

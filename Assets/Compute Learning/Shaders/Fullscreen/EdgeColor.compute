@@ -2,6 +2,8 @@
 
 #include "../Utils/Math.cginc"
 
+RWStructuredBuffer<int> RenderCheckBuffer;
+
 RWTexture2D<float4> Result;
 RWTexture2D<float4> EdgeTexture;
 float4 Color;
@@ -23,7 +25,7 @@ float SqrColorDistance2(float4 a, float4 b) {
 }
 
 bool IsEdge(float4 a, float4 b) {
-	return SqrColorDistance(a, b) > MinDistance * MinDistance;
+	return abs(a.a-b.a) > MinDistance ||  SqrColorDistance(a, b) > MinDistance * MinDistance;
 }
 
 [numthreads(8,8,1)]
@@ -42,4 +44,7 @@ void CSMain(uint3 id : SV_DispatchThreadID) {
 
 	if(IsEdge(color, distA) || IsEdge(color, distB) || IsEdge(color, distC) || IsEdge(color, distD))
 		EdgeTexture[id.xy] = Color;
+		
+	if(id.x+id.y == 0)
+		RenderCheckBuffer[0] = 1;
 }

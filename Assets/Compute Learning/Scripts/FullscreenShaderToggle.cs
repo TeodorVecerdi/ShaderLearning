@@ -21,7 +21,7 @@ public class FullscreenShaderToggleEditor : Editor {
     }
 
     public override void OnInspectorGUI() {
-        var shaders = toggle.GetComponentsInChildren<ComputeRunner2>();
+        var shaders = toggle.GetComponentsInChildren<ComputeRunner3>();
         if(shaders.Length != childCount) scrollPosition = Vector2.zero;
         childCount = shaders.Length;
 
@@ -39,28 +39,24 @@ public class FullscreenShaderToggleEditor : Editor {
             
             GUILayout.BeginHorizontal("box");
             GUI.backgroundColor = defaultColor;
-            GUILayout.Label($"{shader.gameObject.name} ({shader.Shader.name})", GUILayout.ExpandWidth (false));
+            GUILayout.Label($"{shader.gameObject.name} ({shader.ComputeShader.name})", GUILayout.ExpandWidth (false));
             GUILayout.FlexibleSpace();
             GUI.enabled = !shader.Active;
             if (GUILayout.Button("Set active", GUILayout.MinWidth(175))) {
                 foreach (var shader2 in shaders) {
                     if(shader == shader2) continue;
-                    shader2.SetActive(false);
+                    shader2.SetShaderActive(false);
                 }
-                shader.SetActive(true);
+                shader.SetShaderActive(true);
             }
 
             GUI.enabled = true;
             GUILayout.EndHorizontal();
             if (showDuration) {
                 GUILayout.BeginHorizontal("box");
-                var durationMicro = shader.DurationMs * 1000;
-                GUILayout.Label($"Duration: {durationMicro}μs ({shader.DurationMs} ms)");
+                var durationMicro = shader.RenderTime * 1000;
+                GUILayout.Label($"Duration: {durationMicro:F4}μs ({shader.RenderTime:F6} ms)");
                 GUILayout.FlexibleSpace();
-                if (GUILayout.Button("RUN", GUILayout.MinWidth(175))) {
-                    shader.Render();
-                }
-
                 GUILayout.EndHorizontal();
             }
             GUILayout.EndVertical();

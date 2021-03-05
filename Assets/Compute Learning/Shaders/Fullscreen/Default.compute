@@ -1,7 +1,9 @@
 #pragma kernel CSMain
 RWTexture2D<float4> Result;
+RWStructuredBuffer<int> RenderCheckBuffer;
 
 [numthreads(8,8,1)]
 void CSMain(uint3 id : SV_DispatchThreadID) {
-	// pass
+	if(id.x + id.y == 0)
+    	RenderCheckBuffer[0] = 1;
 }
