@@ -1,7 +1,6 @@
 ﻿using System;
 using NaughtyAttributes;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class BlurCompute : ComputeRunner3 {
     [Space]
@@ -28,11 +27,6 @@ public class BlurCompute : ComputeRunner3 {
         if (kernelBuffer != null) kernelBuffer.Release();
     }
 
-    /*protected override void OnEnableShader() {
-        if (TargetDisplay == null) TargetDisplay = GetComponent<RawImage>();
-        if (TargetDisplay != null) TargetDisplay.texture = blurTexture;
-    }*/
-
     protected override Vector3Int GetDispatchSize() {
         var downSampleLevel = 1 << DownSamplingPower;
         var downSampleResolution = resolution / downSampleLevel;
@@ -41,7 +35,7 @@ public class BlurCompute : ComputeRunner3 {
         downSampleResolution.z = 1;
         return downSampleResolution;
     }
-
+    
     protected override void OnBeforeRender(Action beforeRenderComplete) {
         if (kernelDirty) {
             kernelDirty = false;
