@@ -1,0 +1,291 @@
+﻿$accent: #0642a5;
+$bg-dark: #262626;
+$bg-darker: #191919;
+$bg-darker2: #1d1d1d;
+
+
+/*region   TOP TOOLBAR*/
+.AppCommand, .AppCommandLeft, .AppCommandLeftOn, .AppCommandMid, .AppCommandRight,
+.AppToolbarButtonLeft, .AppToolbarButtonRight, .DropDown {
+    background-color: $bg-dark;
+    border-radius:0;
+    border-width: 1px;
+}
+
+.AppToolbarButtonRight {
+    left: 0;
+}
+.AppToolbarButtonLeft:active, .AppToolbarButtonRight:active {
+    color: #c3c3c3;
+}
+
+.AppCommand:disabled, .AppCommandLeft:disabled, .AppCommandLeftOn:disabled, .AppCommandMid:disabled, .AppCommandRight:disabled,
+.AppToolbarButtonLeft:disabled, .AppToolbarButtonRight:disabled, .DropDown:disabled {
+    background-color: $bg-darker;
+}
+
+/*Selected*/
+.AppCommand:checked, .AppCommandLeft:checked, .AppCommandLeftOn:checked, .AppCommandMid:checked, .AppCommandRight:checked {
+    background-color: $accent;
+    border-width: 1px;
+    border-color: $accent;
+    border-radius: 0;
+}
+
+/*Pressed*/
+.AppCommand:active, .AppCommandLeft:active, .AppCommandMid:active, .AppCommandRight:active, .AppToolbarButtonLeft:active, .AppToolbarButtonRight:active {
+    background-color: $accent; 
+    border-width: 1px;
+    border-color: $accent;
+}
+
+.Tooltip, Tooltip {
+    background-color: $bg-dark;
+    border-width: 1px;
+    border-color: $bg-darker2;
+}
+
+.dockHeader, .AppToolbar {
+    background-color: $bg-darker;
+}
+/*endregion*/
+
+/*region   TABS*/
+.dragtab, .dragtab-first {
+    background-color: $bg-darker2;
+    border-radius: 0;
+    border-width: 0;
+}
+
+.dragtab:active, .dragtab-first:active {
+    background-color: $bg-dark;
+    border-top-color: $accent;
+    border-top-width: 2px;
+}
+
+.dragtab:checked, .dragtab-first:checked {
+    background-color: $bg-dark;
+    border-top-color: #6d6d6d;
+    border-top-width: 1px;
+}
+/*endregion*/
+
+/*region    TOOLBAR*/
+.Toolbar {
+    background-color: $bg-dark;
+}
+.IN-LockButton:checked {
+    background-color: $accent;
+}
+.IN-LockButton:active {
+     border-width: 1px;
+     border-color: $accent;
+ }
+.toolbarbutton, .toolbarbuttonRight {
+    border-width: 0;
+    margin-left: 2px;
+    margin-right: 2px;
+    padding-left: 6px;
+    padding-right: 6px;
+    background-color: $bg-dark;
+}
+
+.ToolbarPopup, .ToolbarPopupLeft, .ToolbarSearchTextFieldJumpButton {
+    background-color: $bg-dark;
+    border-width: 0;
+}
+
+.toolbarbutton:active, .toolbarbuttonRight:active, .ToolbarSearchTextFieldJumpButton:active {
+    border-width: 0;
+}
+
+.ToolbarSeachTextFieldPopup, .ToolbarSeachTextField, .ToolbarSearchTextFieldWithJumpPopup {
+    background-color: $bg-darker2;
+    border-width: 0;
+    border-radius: 0;
+}
+
+.ToolbarSeachTextFieldPopup:focus, .ToolbarSeachTextFieldPopup:active, .ToolbarSeachTextFieldPopup:focus:hover,
+.ToolbarSeachTextField:focus, .ToolbarSeachTextField:active, .ToolbarSeachTextField:focus:hover,
+.ToolbarSearchTextFieldWithJumpPopup:focus, .ToolbarSearchTextFieldWithJumpPopup:focus:hover, .ToolbarSearchTextFieldWithJumpPopup:active, {
+    border-top-color: $accent;
+    border-color: $accent;
+}
+
+
+.toolbarbutton:checked, .toolbarbuttonRight:checked,
+.ToolbarDropDownLeft:checked, .ToolbarDropDownToggle:checked, ToolbarDropDownToggleRight:checked {
+    background-color: $bg-dark;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-color: $accent;
+}
+
+/*endregion*/
+/*region   HIERARCHY*/
+.SceneTopBarBg {
+    background-color: $bg-darker;
+    border-color: $bg-darker;
+}
+.WhiteBackground {
+    background-color: rgba(0,0,0,0.4);
+}
+/*endregion*/
+
+.ScrollViewAlt, .TabWindowBackground {
+    background-color: #202020;
+}
+
+/*region PROJECT BROWSER*/
+.ProjectBrowserBottomBarBg, .ProjectBrowserTopBarBg {
+    background-color: #202020;
+}
+.ProjectBrowserIconAreaBg {
+    background-color: #272727;
+}
+
+/*endregion*/
+
+/*region INSPECTOR*/
+.IN-BigTitle {
+    background-color: $bg-darker;
+}
+.IN-Title, .FoldoutHeader {
+    background-color: $bg-darker;
+    border-bottom-width: 1px;
+    border-bottom-color: #242424;
+}
+
+.AC-Button {
+    background-color: $bg-darker;
+    border-width: 0;
+}
+.AC-Button:hover {
+    background-color: #303030;
+}
+
+.IN-TitleText:focus {
+    color: white;
+}
+.ControlLabel:focus {
+    color: lighten($accent, 15);
+}
+.IN-Title:hover, .FoldoutHeader:hover {
+    background-color: $bg-dark;
+}
+
+.PreToolbar, .ToolbarBoldLabel, .IN-Footer { 
+    background-color: $bg-darker;
+}
+
+.MiniPullDown, .MiniPopup, MiniPopup, .minibutton, .Button {
+    background-color: #363636;
+    border-radius: 0;
+    border-color: #363636;
+}
+
+.RL-Empty-Header, .RL-Header, .RL-Element, .RL-Background, .RL-Footer, .RL-FooterButton {
+    background-color: #303030;
+    border-radius: 0;
+    border-color: #303030;
+}
+
+
+.MiniPullDown {
+    border-width: 0;
+    border-radius: 0;
+}
+
+.MiniPullDown:disabled {
+    background-color: #363636;
+}
+
+.ObjectFieldButton {
+    background-color: #282828;
+    border-radius: 0;
+}
+
+.TextField, .BoldTextField,
+.ColorPickerBox, .ColorField, .ObjectField, .MiniPopup {
+    border-radius: 0;
+}
+
+.TextField:disabled, .BoldTextField:disabled, .ColorPickerBox:disabled,
+.ColorField:disabled, .ObjectField:disabled, .MiniPopup:disabled {
+    background-color: #111;
+}
+
+.TextField:focus, .BoldTextField:focus, .ColorPickerBox:focus, 
+.ColorField:focus, .ObjectField:focus, .MiniPopup:focus,
+.TextField:focus:hover, .BoldTextField:focus:hover, .ColorPickerBox:focus:hover,
+.ColorField:focus:hover, .ObjectField:focus:hover, .MiniPopup:focus:hover {
+    border-left-color: $accent;
+    border-right-color: $accent;
+    border-top-color: $accent;
+    border-bottom-color: $accent;
+}
+.ScriptText {
+    background-color: $bg-darker;
+}
+.IN-Footer {
+    border-top-color: #282828;
+}
+
+.Tab-first, .Tab-middle, .Tab-last {
+    background-color: #303030;
+}
+
+.Tab-first {
+    border-top-left-radius: 50%;
+}
+.Tab-last {
+    border-top-right-radius: 50%;
+}
+.FrameBox {
+    border-top-left-radius: 24px;
+    border-top-right-radius: 24px;
+}
+
+.Tab-first:checked, .Tab-middle:checked, .Tab-last:checked, .FrameBox {
+    background-color: #202020;
+}
+
+.HorizontalSlider, .PreSlider {
+    background-color: $accent;
+}
+.HorizontalSliderThumbExtent:focus {
+    background-color: rgba(0,0,0,0);
+}
+.HorizontalSliderThumbExtent:active {
+    background-color: rgba($accent, 0.4);
+}
+.HorizontalSliderThumb, .PreSliderThumb {
+    background-color: #ffffff;
+} 
+/*endregion*/
+
+/*region CONSOLE*/
+.CN-EntryBackOdd {
+    background-color: $bg-dark;
+}
+
+.CN-EntryBackEven:checked, .CN-EntryBackOdd:checked {
+    background-color: desaturate(darken($accent, 8), 35);
+}
+
+.CN-EntryBackEven {
+    background-color: #202020;
+}
+.CN-Box {
+    background-color: $bg-dark;
+}
+.CN-Message {
+    background-color: #303030;
+}
+/*endregion*/
+
+.Window {
+    background-color: #202020;
+}

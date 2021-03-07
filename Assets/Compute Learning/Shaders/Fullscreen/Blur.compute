@@ -1,0 +1,37 @@
+#pragma kernel CSMain
+
+#include "../Utils/Math.cginc"
+
+RWStructuredBuffer<int> RenderCheckBuffer;
+
+Texture2D<float4> Result;
+SamplerState samplerLinearMirrorResult;
+RWTexture2D<float4> Blur;
+Buffer<float> Kernel;
+uint KernelSize;
+
+uint Width;
+uint Height;
+static uint2 Size = uint2(Width, Height);
+
+float4 KernelValue(uint2 current, uint2 kernelIdx) {
+	const uint2 textureIndex = current + kernelIdx;
+	// const uint2 textureIndex = clamp(current + kernelIdx, 0, Size);
+	const int kernelIndex = kernelIdx.x + KernelSize / 2 + (kernelIdx.y + KernelSize / 2) * KernelSize;
+	return Kernel[kernelIndex] * Result.SampleLevel(samplerLinearMirrorResult, float2(textureIndex)/Size, 0);
+	return Kernel[kernelIndex] * Result[textureIndex*4];
+}
+
+[numthreads(8,8,1)]
+void CSMain(uint3 id : SV_DispatchThreadID) {
+	float4 color = 0;
+	const int kernelHalfSize = KernelSize / 2;
+	for (int y = -kernelHalfSize; y <= kernelHalfSize; y++) {
+		for (int x = -kernelHalfSize; x <= kernelHalfSize; x++) {
+			color += KernelValue(id.xy, uint2(x, y));
+		}
+	}
+	Blur[id.xy] = color;
+	if(id.x + id.y == 0)
+		RenderCheckBuffer[0] = 1; 
+}

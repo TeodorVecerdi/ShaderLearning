@@ -1,0 +1,31 @@
+#pragma kernel CSMain
+
+#include "../Utils/Math.cginc"
+
+RWTexture2D<float4> Result;
+float Resolution;
+
+float Radius = 5;
+float WorldSize = 10.0;
+float4 Position;
+
+void DrawCircle(const uint2 screen, const float2 position, const float radius, const float4 circleColor, inout float4 color) {
+	const float value = 1 - floor(SqrDistance(screen, position) - radius * radius);
+	if (value > 0) color = circleColor;
+}
+
+[numthreads(8,8,1)]
+void CSMain(uint3 id : SV_DispatchThreadID) {
+	float4 color = float4(0, 0, 0, 1);
+
+	const float2 circlePos = WorldToLocal(Position.xy, WorldSize);
+	const float circleRadius = WorldToLocal(Radius, WorldSize);
+	
+	// DrawCircle(id.xy, Resolution, 512, float4(0.3, 0.7, 0.9, 1), color);
+	// DrawCircle(id.xy, 0, 256+128, float4(0.7, 0.2, 0.2, 1), color);
+	// DrawCircle(id.xy, float2(0, Resolution-64), 128, float4(0.7, 0.9, 0.2, 1), color);
+	// DrawCircle(id.xy, float2(Resolution-64, 0), 128, float4(0.0, 0.9, 0.7, 1), color);
+	DrawCircle(id.xy, circlePos, circleRadius, float4(1, 1, 1, 1), color);
+
+	Result[id.xy] = color;
+}

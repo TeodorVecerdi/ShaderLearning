@@ -1,0 +1,14 @@
+#pragma kernel CSMain
+
+RWStructuredBuffer<int> CopyCheckBuffer;
+
+RWTexture2D<float4> Src;
+RWTexture2D<float4> Dst;
+
+[numthreads(16,16,1)]
+void CSMain(uint3 id : SV_DispatchThreadID) {
+	Dst[id.xy] = Src[id.xy];
+	
+	if(id.x + id.y == 0)
+		CopyCheckBuffer[0] = 1; 
+}

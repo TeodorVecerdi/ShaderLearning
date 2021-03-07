@@ -1,0 +1,103 @@
+.dockarea, .dockHeader, .dragtab, .dragtab-label,
+.TabWindowBackground,
+Toolbar,
+ToolbarCreateAddNewDropDown,
+.ToolbarSeachTextFieldPopup, ToolbarSeachTextFieldPopup,
+.ToolbarSeachTextField, .ToolbarSeachCancelButtonEmpty, .ToolbarSeachCancelButton,
+.toolbarbutton, .toolbarbuttonRight,
+.CenteredLabel,
+.ScrollViewAlt,
+.SceneTopBarBg,
+.PaneOptions,
+.IN-Foldout,
+.IN-LockButton,
+.IN-BigTitle, /*inspector header (name of object) */
+.TV-LineBold,
+.TV-Selection,
+.TV-Line,
+.WhiteBackground, /*Hierarchy left side bar (everything under the + icon) */
+.HorizontalSlider, .HorizontalSliderThumbExtent, .HorizontalSliderThumb,
+.Label, .BoldLabel,
+.ProjectBrowserBottomBarBg, .ProjectBrowserTopBarBg, .ProjectBrowserIconAreaBg, .ProjectBrowserGridLabel, /*Project/Assets object name label*/
+.ProjectBrowserSubAssetExpandBtnSmall, .ProjectBrowserSubAssetExpandBtnMedium, .ProjectBrowserSubAssetExpandBtn, /* Nested assets buttons*/
+.ProjectBrowserSubAssetBg, .ProjectBrowserSubAssetBgCloseEnded, .ProjectBrowserSubAssetBgMiddle, /*Nested assets expanded background*/
+.OL-ResultLabel, /*Asset browser/Project tab list view entry */
+.ArrowNavigationRight, /*Project/Assets right arrow breadcrumbs*/
+.ObjectPickerResultsGrid, /*Project/Assets object background*/
+.ScrollView,
+.ToolbarDropDownLeft, .ToolbarDropDownToggle, .ToolbarDropDownToggleRight, .ToolbarDropDown,
+.SC-ViewLabelLeftAligned, .SC-ViewAxisLabel, /*Scene view upper right axis labels and 'persp/ortho' label*/
+.Window, /*Scene view camera preview window*/
+SceneVisibility, /* Hide/Scene Picking buttons in hierarchy*/
+.HelpBox,
+.minibutton, /*Inspector Importer button and the like*/
+.IconButton, /*Inspector Icon selector and help button */
+.LargeLabel, /*Inspector large name at top when selecting an item in the assets folder / project tab */
+.ControlLabel, /* Label of any input field */
+.ScriptText, /*Inspector script text preview */
+.ObjectField, .ObjectFieldButton, /*Inspector object field (where you drag shit), Button is the little circular button next to it that opens the object browser*/
+.PreToolbar, .ToolbarBoldLabel, /*Asset import footer with 'Asset Labels'*/
+.IN-Footer, /*Inspector footer ?*/
+.IN-Title, .IN-TitleText, /*Inspector component title background and text*/
+.AssetLabel-Icon, /*Asset import footer 'tag' icon*/
+.SearchTextField, SearchTextField,
+.SearchCancelButtonEmpty, SearchCancelButtonEmpty,
+.Toggle, Toggle,
+.TextField, TextField,
+.BoldTextField, BoldTextField, /*Inspector top object name text field*/
+.Button, Button,
+.MiniPopup, MiniPopup,
+.Foldout, Foldout,
+.FoldoutHeader, FoldoutHeader,
+.Box, Box,
+.PreBackground, PreBackground,
+.ColorPickerBox, ColorPickerBox,
+.ColorField, ColorField,
+.MiniPullDown, MiniPullDown,
+.ObjectFieldThumbOverlay2, ObjectFieldThumbOverlay2,
+.ObjectFieldThumb, ObjectFieldThumb,
+.ObjectFieldMiniThumb, ObjectFieldMiniThumb,
+.StaticDropdown, StaticDropdown, /*Inspector static settings dropdown */
+.RL-Empty-Header, .RL-Header, .RL-Element, .RL-Background, .RL-Footer, .RL-FooterButton, /*Inspector lists?, +/- buttons & surrounding area*/
+RL-Empty-Header, RL-Header, RL-Element, RL-Background, RL-Footer, RL-FooterButton,
+.RL-DragHandle, RL-DragHandle,
+.AC-Button, /*Add component button*/
+.Tab-first, .Tab-middle, .Tab-last, .FrameBox,
+.PreSlider, PreSlider, .PreSliderThumb, PreSliderThumb,
+.PreOverlayLabel, PreOverlayLabel,
+.ToolbarLabel, ToolbarLabel,
+.ToolbarPopup, .ToolbarPopupLeft,
+.GameViewBackground, GameViewBackground,
+.AppToolbar, .StatusBarIcon, /*Absolute bottom bar & Top bar/toolbar*/
+.AppCommand, .AppCommandLeft, .AppCommandMid, .AppCommandRight, /*Top toolbar buttons*/
+.AppCommandLeftOn, /*Play button when playing*/
+.AppToolbarButtonLeft, .AppToolbarButtonRight,
+.DropDown, /*Top toolbar dropdowns 'Account', 'Layers', 'Layout'*/
+.Tooltip, Tooltip,
+.CN-EntryBackOdd, .CN-EntryBackEven, .CN-Box, .CN-Message,
+.CN-EntryWarn, .CN-EntryWarnIcon,
+.CN-EntryInfo, .CN-EntryInfoIcon,
+.CN-EntryError, .CN-EntryErrorIcon,
+.VerticalScrollbar, .VerticalScrollbarThumb, .VerticalScrollbarUpButton, .VerticalScrollbarDownButton
+{
+    border-width: 1px !important;
+    border-color: #11e515 !important;
+    color: #dba368 !important;
+    background-color: #1b2645 !important;
+    -unity-background-image-tint-color: #e5117f !important;
+}
+
+.dockareaOverlay {
+    border-width: 1px !important;
+    border-color: #e53b11 !important;
+    color: #1161e5 !important;
+    /*background-color: rgba(219, 27, 155, 0.1) !important;*/
+}
+
+/*testing*/
+.boo {
+    border-width: 1px !important;
+    border-color: #e53b11 !important;
+    background-color: #00ff40 !important;
+}
+

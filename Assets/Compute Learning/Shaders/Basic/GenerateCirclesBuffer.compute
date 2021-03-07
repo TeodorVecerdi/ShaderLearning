@@ -1,0 +1,30 @@
+#pragma kernel CSMain
+
+#include "../Utils/Random.cginc"
+#include "../Utils/Math.cginc"
+#define MAX_CIRCLES 1024
+
+struct Circle {
+	float3 Position; //xy => position, z => radius
+	float4 Color;
+};
+
+float Resolution;
+float WorldSize = 64.0;
+float PositionRange = 8.0;
+float2 Seed;
+RWStructuredBuffer<Circle> Circles;
+int CircleCount = 0;
+
+[numthreads(10,1,1)]
+void CSMain(uint3 id : SV_DispatchThreadID) {
+	float p = id.x/Resolution;
+	float xPos = rand(float2(p, Seed.x));
+	float yPos = rand(float2(Seed.y, xPos));
+	float rad = Map(rand(float2(Seed.x + xPos, yPos)), 0, 1, 0.25, 0.5);
+	float3 color = float3(rand(float2(rad + Seed.x, yPos)), rand(float2(xPos + Seed.y, rad + Seed.x)), rand(float2(rad + xPos * yPos + Seed.x, Seed.y + yPos)));
+	
+	Circles[id.x].Position.xy = float2(xPos, yPos) * PositionRange;
+	Circles[id.x].Position.z = rad;
+	Circles[id.x].Color = float4(color, 1);
+}

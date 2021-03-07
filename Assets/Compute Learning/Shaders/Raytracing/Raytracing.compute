@@ -1,0 +1,89 @@
+#pragma kernel CSMain
+
+RWStructuredBuffer<int> RenderCheckBuffer;
+
+RWTexture2D<float4> Result;
+float4x4 CameraToWorld;
+float4x4 CameraInverseProjection;
+float4 DirectionalLight;
+
+float2 PixelOffset;
+
+Texture2D<float4> SkyboxTexture;
+SamplerState samplerSkyboxTexture;
+
+static const float PI = 3.14159265f;
+static const float DISTANCE_INFINITY = 1000000000.0;
+static const float SKYBOX_INTENSITY = 1.0;
+
+#include "Structs.cginc"
+Scene CurrentScene;
+#include "Intersections.cginc"
+
+uint SphereCount;
+
+float3 SampleSkybox(float3 direction) {
+	float theta = acos(direction.y) / -PI;
+	float phi = atan2(direction.x, -direction.z) / -PI * 0.5;
+	return SKYBOX_INTENSITY * SkyboxTexture.SampleLevel(samplerSkyboxTexture, float2(phi, theta), 0);
+}
+
+HitInfo Trace(Ray ray) {
+	HitInfo bestHit = CreateHitInfo();
+	// IntersectGroundPlane(ray, bestHit, CreatePlane(-4.0f, 0));
+
+	for (uint i = 0; i < SphereCount; i++) {
+		IntersectSphere(ray, bestHit, CurrentScene.Spheres[i]);
+	}
+
+	return bestHit;
+}
+
+float3 Shade(inout Ray ray, HitInfo hit) {
+	if (hit.distance < DISTANCE_INFINITY) {
+		const float3 specular = hit.specular;
+		const float3 albedo = hit.albedo;
+		const float ambient = 0.05;
+
+		ray.origin = hit.position + hit.normal * 0.001f;
+		ray.direction = reflect(ray.direction, hit.normal);
+		ray.energy *= specular;
+
+		// Trace shadow ray
+		const Ray shadowRay = CreateRay(hit.position + hit.normal * 0.001f, -DirectionalLight.xyz);
+		const HitInfo shadowHitInfo = Trace(shadowRay);
+		if (shadowHitInfo.distance < DISTANCE_INFINITY) {
+			ray.energy = 0;
+			return albedo * ambient;
+		}
+
+		return saturate(saturate(-dot(hit.normal, DirectionalLight.xyz)) * DirectionalLight.w * albedo + albedo * ambient);
+	}
+
+	ray.energy = 0.0f;
+	return SampleSkybox(ray.direction);
+}
+
+[numthreads(32, 16, 1)]
+void CSMain(uint3 id : SV_DispatchThreadID) {
+	uint width, height, stride;
+	Result.GetDimensions(width, height);
+	CurrentScene.Spheres.GetDimensions(SphereCount, stride);
+
+	// convert to [-1, 1] range
+	const float2 uv = float2((id.xy + PixelOffset) / float2(width, height) * 2.0 - 1.0);
+	Ray ray = CreateRayFromCamera(uv);
+
+	float3 result = float3(0, 0, 0);
+	for (int i = 0; i < 4; i++) {
+		const HitInfo hitInfo = Trace(ray);
+		result += ray.energy * Shade(ray, hitInfo);
+
+		if (!any(ray.energy)) break;
+	}
+
+	Result[id.xy] = float4(result, 1);
+
+	if (id.x == 0 && id.y == 0)
+		RenderCheckBuffer[0] = 1;
+}

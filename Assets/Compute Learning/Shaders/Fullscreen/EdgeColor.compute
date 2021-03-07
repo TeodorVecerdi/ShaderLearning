@@ -1,0 +1,50 @@
+#pragma kernel CSMain
+
+#include "../Utils/Math.cginc"
+
+RWStructuredBuffer<int> RenderCheckBuffer;
+
+RWTexture2D<float4> Result;
+RWTexture2D<float4> EdgeTexture;
+float4 Color;
+float MinDistance = 0.25;
+float LookupDistance = 3.0;
+int Width;
+int Height;
+static int2 Size = int2(Width, Height);
+
+float SqrColorDistance(float4 a, float4 b) {
+	return SqrDistance(a, b);
+}
+
+float SqrColorDistance2(float4 a, float4 b) {
+	const float avgR = 0.5 * (a.x + b.x);
+	const float3 deltaColor = (b - a) * (b - a);
+	const float dist = (2 + avgR) * deltaColor.x + 4 * deltaColor.y + (2 + (255.0 - avgR * 256.0)/256.0) * deltaColor.z;
+	return dist;
+}
+
+bool IsEdge(float4 a, float4 b) {
+	return abs(a.a-b.a) > MinDistance ||  SqrColorDistance(a, b) > MinDistance * MinDistance;
+}
+
+[numthreads(8,8,1)]
+void CSMain(uint3 id : SV_DispatchThreadID) {
+	uint2 offA = clamp(id.xy + uint2(LookupDistance, 0), 0, Size);
+	float4 distA = Result[offA];
+	uint2 offB = clamp(id.xy - uint2(LookupDistance, 0), 0, Size);
+	float4 distB = Result[offB];
+	uint2 offC = clamp(id.xy + uint2(0, LookupDistance), 0, Size);
+	float4 distC = Result[offC];
+	uint2 offD = clamp(id.xy - uint2(0, LookupDistance), 0, Size);
+	float4 distD = Result[offD];
+	
+	float4 color = Result[id.xy];
+	EdgeTexture[id.xy] = color;
+
+	if(IsEdge(color, distA) || IsEdge(color, distB) || IsEdge(color, distC) || IsEdge(color, distD))
+		EdgeTexture[id.xy] = Color;
+		
+	if(id.x+id.y == 0)
+		RenderCheckBuffer[0] = 1;
+}

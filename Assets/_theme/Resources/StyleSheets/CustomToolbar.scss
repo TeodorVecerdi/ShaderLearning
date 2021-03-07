@@ -1,0 +1,174 @@
+$accent: #0642a5;
+$bg-dark: #262626;
+$bg-darker: #191919;
+$bg-darker2: #1d1d1d;
+
+#ToolbarContainerContent {
+  background-color: $bg-darker;
+  #ToolbarZoneLeftAlign {
+    
+    // Left tools
+    BuiltinToolsStrip {
+      margin-right: 3px;
+      height: 20px;
+      ToolButton, LastCustomToolButton {
+        border-radius: 0;
+        border-width: 0;
+        border-left-width: 1px;
+        margin-left: 0;
+        padding-left: 5px;
+        padding-right: 5px;
+        background-color: $bg-dark;
+        border-color: $bg-dark;
+        margin-right: 1px;
+        
+        & > VisualElement {
+          -unity-background-image-tint-color: rgba(#ffffff, 0.75);
+        }
+        &:checked, &:checked:hover {
+          background-color: $accent;
+          border-color: $accent;
+          
+          & > VisualElement { // icon
+            -unity-background-image-tint-color: rgba(#ffffff, 1);
+          }
+        }
+        
+        &:active:hover {
+          background-color: $accent;
+          border-color: $accent;
+
+          & > VisualElement { // icon
+            -unity-background-image-tint-color: rgba(#ffffff, 1);
+          }
+        }
+        
+        &:hover {
+          background-color: lighten($bg-dark, 10);
+          border-color: lighten($bg-dark, 10);
+          & > VisualElement { // icon
+            -unity-background-image-tint-color: rgba(#ffffff, 1);
+          }
+        }
+      }
+    }
+    
+    // Pivot/Center & Space (Local,World)
+    ActiveToolSettings {
+      height: 20px;
+      margin-right: 0;
+      EditorToolbarCycleButton {
+        border-radius: 0;
+        border-width: 1px;
+        background-color: $bg-dark;
+        border-color: $bg-dark;
+        margin-left: 1px;
+        min-width: 80px;
+        
+        &:hover {
+          background-color: lighten($bg-dark, 10);
+          border-color: lighten($bg-dark, 10);
+        }
+        
+        &:active {
+          background-color: $accent;
+          border-color: $accent;
+        }
+        
+        & > .unity-editor-toolbar-element__icon {
+          margin-right: 4px;
+        }
+
+        & > .unity-editor-toolbar-element__label {
+          //color: lightgray;
+        }
+      }
+    }
+
+    SnapSettings {
+      margin-left: 2px;
+      EditorToolbarToggle {
+        border-radius: 0;
+        border-width: 1px;
+        background-color: $bg-dark;
+        border-color: $bg-dark;
+        margin-left: 1px;
+        
+        &:hover {
+          background-color: lighten($bg-dark, 10);
+          border-color: lighten($bg-dark, 10);
+        }
+
+        &:active, &:checked {
+          background-color: $accent;
+          border-color: $accent;
+        }
+        
+        &:disabled {
+          background-color: $bg-darker;
+          border-color: $bg-darker;
+        }
+      }
+    }
+  }
+  
+  #ToolbarZonePlayMode {
+    PlayModeButtons {
+      EditorToolbarToggle, ToolbarButton {
+        border-radius: 0;
+        border-width: 1px;
+        background-color: $bg-dark;
+        border-color: $bg-dark;
+        margin-left: 1px;
+
+        &:hover {
+          background-color: lighten($bg-dark, 10);
+          border-color: lighten($bg-dark, 10);
+        }
+        
+        &:active, &:checked {
+          background-color: $accent;
+          border-color: $accent;
+        }
+
+        &:disabled {
+          background-color: $bg-darker;
+          border-color: $bg-darker;
+        }
+      }
+    }
+  }
+  
+  #ToolbarZoneRightAlign {
+    SearchButton {
+      margin-right: 0;
+    }
+    
+    MainToolbarImguiContainer {
+      top: -1px;
+    }
+    
+    .unity-toolbar-button.unity-editor-toolbar-element {
+      border-radius: 0;
+      border-width: 1px;
+      background-color: $bg-dark;
+      border-color: $bg-dark;
+      margin-left: 1px;
+
+      &:hover {
+        background-color: lighten($bg-dark, 10);
+        border-color: lighten($bg-dark, 10);
+      }
+
+      &:active, &:checked {
+        background-color: $accent;
+        border-color: $accent;
+      }
+
+      &:disabled {
+        background-color: $bg-darker;
+        border-color: $bg-darker;
+      }
+    }
+  }
+}
