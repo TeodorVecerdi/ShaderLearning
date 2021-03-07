@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using NaughtyAttributes;
+using UnityCommons;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
@@ -19,15 +20,35 @@ public class RaytracingMaster : MonoBehaviour {
     private ComputeBuffer dummyRenderCheckBuffer;
     private readonly int[] renderCheckBufferData = {0};
 
-    private readonly Stopwatch timer = new Stopwatch();
+    private uint currentSample;
+    private Material antiAliasingMaterial;
 
+    private float oldFieldOfView;
+
+    private readonly Stopwatch timer = new Stopwatch();
     private bool lastFrameReady = true;
+    
+    private static readonly int antiAliasingSampleID = Shader.PropertyToID("_Sample");
 
     private void Awake() {
         Resolution.Bake();
         InitRenderTexture();
         MakeBuffer(ref dummyRenderCheckBuffer, 1, sizeof(int), renderCheckBufferData);
         Display.texture = displayTexture;
+
+        oldFieldOfView = Camera.fieldOfView;
+    }
+
+    private void Update() {
+        if (Camera.transform.hasChanged) {
+            Camera.transform.hasChanged = false;
+            currentSample = 0;
+        }
+
+        if (Math.Abs(oldFieldOfView - Camera.fieldOfView) > 0.01f) {
+            oldFieldOfView = Camera.fieldOfView;
+            currentSample = 0;
+        }
     }
 
     private void Run() {
@@ -42,18 +63,13 @@ public class RaytracingMaster : MonoBehaviour {
     }
 
     private void Render() {
-
         SetShaderParameters();
         RaytracingShader.SetTexture(0, "Result", targetTexture);
         var threadGroupsX = Mathf.CeilToInt(Resolution.Value.x / 8.0f);
         var threadGroupsY = Mathf.CeilToInt(Resolution.Value.y / 8.0f);
         RaytracingShader.Dispatch(0, threadGroupsX, threadGroupsY, 1);
-
-        AsyncGPUReadback.Request(dummyRenderCheckBuffer, request => {
-            if (request.hasError) Debug.Log("<b>AsyncGPUReadback.Request(dummyRenderCheckBuffer)</b> has error");
-            lastFrameReady = true;
-            Graphics.Blit(targetTexture, displayTexture);
-        });
+        
+        OnRender();
     }
 
     private void SetShaderParameters() {
@@ -61,11 +77,27 @@ public class RaytracingMaster : MonoBehaviour {
         RaytracingShader.SetMatrix("CameraToWorld", Camera.cameraToWorldMatrix);
         RaytracingShader.SetMatrix("CameraInverseProjection", Camera.projectionMatrix.inverse);
         RaytracingShader.SetTexture(0, "SkyboxTexture", SkyboxTexture);
+        RaytracingShader.SetVector("PixelOffset", new Vector2(Rand.Float, Rand.Float));
+    }
+
+    private void OnRender() {
+        AsyncGPUReadback.Request(dummyRenderCheckBuffer, request => {
+            if (request.hasError) Debug.Log("<b>AsyncGPUReadback.Request(dummyRenderCheckBuffer)</b> has error");
+            lastFrameReady = true;
+
+            if (antiAliasingMaterial == null) antiAliasingMaterial = new Material(Shader.Find("Hidden/RaytracingAA"));
+            antiAliasingMaterial.SetFloat(antiAliasingSampleID, currentSample);
+            currentSample++;
+            
+            Graphics.Blit(targetTexture, displayTexture, antiAliasingMaterial);
+        });
     }
 
     private void InitRenderTexture() {
-        MakeTexture(ref targetTexture, Resolution);
-        MakeTexture(ref displayTexture, Resolution);
+        var copy = Resolution.Value;
+        copy.z = 0;
+        MakeTexture(ref targetTexture, copy, RenderTextureFormat.ARGBFloat);
+        MakeTexture(ref displayTexture, copy, RenderTextureFormat.ARGBFloat);
     }
 
     private void MakeTexture(ref RenderTexture texture, Vector3Int textureResolution, RenderTextureFormat format = RenderTextureFormat.ARGB32,

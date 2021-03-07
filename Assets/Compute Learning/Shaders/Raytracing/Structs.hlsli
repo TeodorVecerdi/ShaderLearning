@@ -1,5 +1,5 @@
-#ifndef RAYTRACING_INCLUDED
-#define RAYTRACING_INCLUDED
+#ifndef STRUCTS_INCLUDED
+#define STRUCTS_INCLUDED
 
 struct Ray {
 	float3 origin;
@@ -42,5 +42,19 @@ Sphere CreateSphere(float3 position, float3 color, float radius) {
 	sphere.radius = radius;
 	return sphere;
 }
+
+Ray CreateRayFromCamera(float2 uv) {
+	// transform camera to world space
+	float3 origin = mul(CameraToWorld, float4(0,0,0,1)).xyz;
+
+	// Invert the perspective projection
+	float3 direction = mul(CameraInverseProjection, float4(uv, 0, 1)).xyz;
+	// Transform the direction from camera space to world space and normalize
+	direction = mul(CameraToWorld, float4(direction, 0.0)).xyz;
+	direction = normalize(direction);
+	
+	return CreateRay(origin, direction);
+}
+
 
 #endif

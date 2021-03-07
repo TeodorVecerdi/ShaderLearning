@@ -1,10 +1,8 @@
 #ifndef INTERSECTIONS_INCLUDED
 #define INTERSECTIONS_INCLUDED
 
-#include "Structs.hlsli"
-
-void IntersectGroundPlane(Ray ray, inout HitInfo bestHit) {
-	float t = -ray.origin.y / ray.direction.y;
+void IntersectGroundPlane(Ray ray, inout HitInfo bestHit, float planeY) {
+	float t = (-ray.origin.y+planeY) / ray.direction.y;
 	if(t > 0 && t < bestHit.distance) {
 		bestHit.distance = t;
 		bestHit.position = ray.origin + t * ray.direction;
@@ -21,7 +19,7 @@ void IntersectSphere(Ray ray, inout HitInfo bestHit, Sphere sphere) {
 	if(p2sqr < 0) return;
 	float p2 = sqrt(p2sqr);
 	float t = p1 - p2 > 0 ? p1 - p2 : p1 + p2;
-	if(t > 0 && t < DISTANCE_INFINITY) {
+	if(t > 0 && t < bestHit.distance) {
 		bestHit.distance = t;
 		bestHit.position = ray.origin + t * ray.direction;
 		bestHit.normal = normalize(bestHit.position - sphere.position);

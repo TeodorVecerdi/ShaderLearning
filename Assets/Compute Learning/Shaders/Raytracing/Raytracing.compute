@@ -1,44 +1,38 @@
 #pragma kernel CSMain
 
+RWStructuredBuffer<int> RenderCheckBuffer;
+
 RWTexture2D<float4> Result;
 float4x4 CameraToWorld;
 float4x4 CameraInverseProjection;
-RWStructuredBuffer<int> RenderCheckBuffer;
+float2 PixelOffset;
+
 Texture2D<float4> SkyboxTexture;
 SamplerState samplerSkyboxTexture;
+
 static const float PI = 3.14159265f;
 static const float DISTANCE_INFINITY = 1000000000.0;
 
 #include "Structs.hlsli"
 #include "Intersections.hlsli"
 
-Ray CreateRayFromCamera(float2 uv) {
-	// transform camera to world space
-	float3 origin = mul(CameraToWorld, float4(0,0,0,1)).xyz;
-
-	// Invert the perspective projection
-	float3 direction = mul(CameraInverseProjection, float4(uv, 0, 1)).xyz;
-	// Transform the direction from camera space to world space and normalize
-	direction = mul(CameraToWorld, float4(direction, 0.0)).xyz;
-	direction = normalize(direction);
-	
-	return CreateRay(origin, direction);
+float3 SampleSkybox(float3 direction) {
+	float theta = acos(direction.y) / -PI;
+	float phi = atan2(direction.x, -direction.z) / -PI * 0.5;
+	return SkyboxTexture.SampleLevel(samplerSkyboxTexture, float2(phi, theta), 0);
 }
 
 float3 Shade(inout Ray ray, HitInfo hit) {
 	if(hit.distance < DISTANCE_INFINITY) {
 		return hit.color;
 	}
-	float theta = acos(ray.direction.y) / -PI;
-	float phi = atan2(ray.direction.x, -ray.direction.z) / -PI * 0.5;
-	return SkyboxTexture.SampleLevel(samplerSkyboxTexture, float2(phi, theta), 0);
+	return SampleSkybox(ray.direction);
 }
 
 HitInfo Trace(Ray ray) {
 	HitInfo bestHit = CreateHitInfo();
-	Sphere sphere = CreateSphere(float3(-148.33, 1.53f, -9.17), float3(0.2,0.7,0.1), 1.0f);
-	IntersectSphere(ray, bestHit,sphere);
-	IntersectGroundPlane(ray, bestHit);
+	IntersectGroundPlane(ray, bestHit, 0);
+	IntersectSphere(ray, bestHit, CreateSphere(float3(-148.33, 1.54, -9.17), float3(0.2,0.7,0.1), 1.0f));
 	return bestHit;
 }
 
@@ -48,10 +42,10 @@ void CSMain(uint3 id : SV_DispatchThreadID) {
 	Result.GetDimensions(width, height);
 
 	// convert to [-1, 1] range
-	float2 uv = float2((id.xy + float2(0.5, 0.5)) / float2(width, height) * 2.0 - 1.0);
+	const float2 uv = float2((id.xy + PixelOffset) / float2(width, height) * 2.0 - 1.0);
 	Ray ray = CreateRayFromCamera(uv);
 	
-	HitInfo hitInfo = Trace(ray);
+	const HitInfo hitInfo = Trace(ray);
 	float3 result = Shade(ray, hitInfo);
 	Result[id.xy] = float4(result, 1);
 	
