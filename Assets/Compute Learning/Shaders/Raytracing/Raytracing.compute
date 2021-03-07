@@ -30,7 +30,7 @@ float3 SampleSkybox(float3 direction) {
 
 HitInfo Trace(Ray ray) {
 	HitInfo bestHit = CreateHitInfo();
-	IntersectGroundPlane(ray, bestHit, CreatePlane(-4.0f, 0));
+	// IntersectGroundPlane(ray, bestHit, CreatePlane(-4.0f, 0));
 
 	for (uint i = 0; i < SphereCount; i++) {
 		IntersectSphere(ray, bestHit, CurrentScene.Spheres[i]);
@@ -43,7 +43,7 @@ float3 Shade(inout Ray ray, HitInfo hit) {
 	if (hit.distance < DISTANCE_INFINITY) {
 		const float3 specular = hit.specular;
 		const float3 albedo = hit.albedo;
-		const float ambient = 0.008;
+		const float ambient = 0.05;
 
 		ray.origin = hit.position + hit.normal * 0.001f;
 		ray.direction = reflect(ray.direction, hit.normal);
@@ -64,7 +64,7 @@ float3 Shade(inout Ray ray, HitInfo hit) {
 	return SampleSkybox(ray.direction);
 }
 
-[numthreads(8,8,1)]
+[numthreads(32, 16, 1)]
 void CSMain(uint3 id : SV_DispatchThreadID) {
 	uint width, height, stride;
 	Result.GetDimensions(width, height);
@@ -75,7 +75,7 @@ void CSMain(uint3 id : SV_DispatchThreadID) {
 	Ray ray = CreateRayFromCamera(uv);
 
 	float3 result = float3(0, 0, 0);
-	for (int i = 0; i < 8; i++) {
+	for (int i = 0; i < 4; i++) {
 		const HitInfo hitInfo = Trace(ray);
 		result += ray.energy * Shade(ray, hitInfo);
 

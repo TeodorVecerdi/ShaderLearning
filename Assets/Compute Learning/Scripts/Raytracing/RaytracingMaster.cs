@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using NaughtyAttributes;
+using TMPro;
 using UnityCommons;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
@@ -12,6 +14,7 @@ using Random = UnityEngine.Random;
 public class RaytracingMaster : MonoBehaviour {
     [SerializeField] private ComputeShader RaytracingShader;
     [SerializeField] private BakedType<Vector3Int> Resolution = new Vector3Int(2048, 1024, 32);
+    [SerializeField] private int Samples = 256;
     [SerializeField, Required] private Camera Camera;
     [SerializeField, Required] private RawImage Display;
     [Space, SerializeField] private Texture SkyboxTexture;
@@ -20,12 +23,14 @@ public class RaytracingMaster : MonoBehaviour {
     [Header("Random Settings")]
     [SerializeField] private Vector2Int MaterialCountMinMax = new Vector2Int(5, 20);
     [SerializeField] private float MetallicChance = 0.5f;
+    [SerializeField] private Vector2 SpecularRange = new Vector2(0, 0.002f);
     [SerializeField] private Vector2Int SphereCountMinMax = new Vector2Int(10, 30);
     [SerializeField] private Vector2 SphereRadiusMinMax = new Vector2(3, 8);
     [SerializeField] private float SpherePositionRadius = 100.0f;
     [SerializeField] private float SpherePositionHeight = 10f;
     
     [Space(20), ReadOnly, SerializeField] private string Duration;
+    private double duration;
 
     private RenderTexture targetTexture;
     private RenderTexture displayTexture;
@@ -70,13 +75,15 @@ public class RaytracingMaster : MonoBehaviour {
             oldFieldOfView = Camera.fieldOfView;
             currentSample = 0;
         }
+
+        if (currentSample > Samples) currentSample = (uint)Samples;
     }
 
     private void Run() {
         if (!lastFrameReady) return;
         lastFrameReady = false;
 
-        var duration = timer.Elapsed.TotalMilliseconds;
+        duration = timer.Elapsed.TotalMilliseconds;
         Duration = $"{duration:F4}ms";
         timer.Restart();
 
@@ -86,8 +93,8 @@ public class RaytracingMaster : MonoBehaviour {
     private void Render() {
         SetShaderParameters();
         RaytracingShader.SetTexture(0, "Result", targetTexture);
-        var threadGroupsX = Mathf.CeilToInt(Resolution.Value.x / 8.0f);
-        var threadGroupsY = Mathf.CeilToInt(Resolution.Value.y / 8.0f);
+        var threadGroupsX = Mathf.CeilToInt(Resolution.Value.x / 32.0f);
+        var threadGroupsY = Mathf.CeilToInt(Resolution.Value.y / 16.0f);
         RaytracingShader.Dispatch(0, threadGroupsX, threadGroupsY, 1);
         
         OnRender();
@@ -149,13 +156,13 @@ public class RaytracingMaster : MonoBehaviour {
             var color = Random.ColorHSV();
             var colorVector = new Vector3(color.r, color.g, color.b);
             var isMetallic = Rand.Chance(MetallicChance);
-            var specular = Rand.Range(0.001f, 0.04f);
+            var specular = Rand.Range(SpecularRange);
             if (isMetallic) {
                 material.Albedo = colorVector * specular;
                 material.Specular = colorVector;
             } else {
                 material.Albedo = colorVector;
-                material.Specular = colorVector * specular;
+                material.Specular = Vector3.zero;
             }
             Scene.Materials.Add(material);
         }

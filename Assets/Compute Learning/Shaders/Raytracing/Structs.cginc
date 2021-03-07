@@ -30,6 +30,8 @@ struct Plane {
 struct Material {
 	float3 albedo;
 	float3 specular;
+	float3 emission;
+	float smoothness;
 };
 
 struct Scene {
@@ -55,7 +57,7 @@ static HitInfo CreateHitInfo() {
 	return hitInfo;
 }
 
-Sphere CreateSphere(const float3 position, const float radius, const uint materialIndex) {
+static Sphere CreateSphere(const float3 position, const float radius, const uint materialIndex) {
 	Sphere sphere;
 	sphere.position = position;
 	sphere.radius = radius;
@@ -63,14 +65,14 @@ Sphere CreateSphere(const float3 position, const float radius, const uint materi
 	return sphere;
 }
 
-Plane CreatePlane(const float y, const uint materialIndex) {
+static Plane CreatePlane(const float y, const uint materialIndex) {
 	Plane plane;
 	plane.y = y;
 	plane.materialIndex = materialIndex;
 	return plane;
 }
 
-Material CreateMaterial(const float3 albedo, const float3 specular) {
+static Material CreateMaterial(const float3 albedo, const float3 specular) {
 	Material material;
 	material.albedo = albedo;
 	material.specular = specular;
