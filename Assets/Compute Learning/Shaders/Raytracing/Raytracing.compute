@@ -5,6 +5,8 @@ RWStructuredBuffer<int> RenderCheckBuffer;
 RWTexture2D<float4> Result;
 float4x4 CameraToWorld;
 float4x4 CameraInverseProjection;
+float4 DirectionalLight;
+
 float2 PixelOffset;
 
 Texture2D<float4> SkyboxTexture;
@@ -15,6 +17,14 @@ static const float DISTANCE_INFINITY = 1000000000.0;
 static const float SKYBOX_INTENSITY = 1.0;
 
 #include "Structs.cginc"
+
+static Material Materials[4] = {
+	CreateMaterial(0.7f, 0.02f), // Plane
+	CreateMaterial(float3(1.0f, 0.0f, 0.0f), 0.0001f), // Sphere 1
+	CreateMaterial(float3(0.0f, 0.0f, 1.0f), 0.042f), // Sphere 2
+	CreateMaterial(float3(0.4f, 0.7f, 0.2f), 0.005f) // Sphere 3
+};
+
 #include "Intersections.cginc"
 
 float3 SampleSkybox(float3 direction) {
@@ -23,32 +33,45 @@ float3 SampleSkybox(float3 direction) {
 	return SKYBOX_INTENSITY * SkyboxTexture.SampleLevel(samplerSkyboxTexture, float2(phi, theta), 0);
 }
 
-float3 Shade(inout Ray ray, HitInfo hit) {
-	if(hit.distance < DISTANCE_INFINITY) {
-		// const float3 specular = float3(1, 0.78, 0.33);
-		const float3 specular = float3(1, 1, 1);
-
-		ray.origin = hit.position + hit.normal * 0.001f;
-		ray.direction = reflect(ray.direction, hit.normal);
-		ray.energy *= specular;
-		
-		return hit.color;
-	}
-	
-	ray.energy = 0.0f;
-	return SampleSkybox(ray.direction);
-}
-
 HitInfo Trace(Ray ray) {
 	HitInfo bestHit = CreateHitInfo();
-	// IntersectGroundPlane(ray, bestHit, -2);
-	for(int x = 0; x < 4; x++) {
-		for (int y = 0; y < 4; y++) {
-			IntersectSphere(ray, bestHit, CreateSphere(float3(-148.33 + x * 13, 5.54, -9.17 + y * 13), float3(0.1,0.1,0.1), 6.0f));		
+	IntersectGroundPlane(ray, bestHit, CreatePlane(-4.0f, 0));
+	for(uint x = 0; x < 4; x++) {
+		for (uint y = 0; y < 2; y++) {
+			for (uint z = 0; z < 4; z++) {
+				IntersectSphere(ray, bestHit, CreateSphere(float3(-148.33 + x * 16, 5.54 + y * 20, -9.17 + z * 16), 6.0f, (x%3 + y%2 + z%3) % 3 + 1));
+			}
 		}
 	}
 	
 	return bestHit;
+}
+
+float3 Shade(inout Ray ray, HitInfo hit) {
+	if(hit.distance < DISTANCE_INFINITY) {
+		const float3 specular = hit.specular;
+		const float3 albedo = hit.albedo;
+		// const float3 specular = 0.004f;
+		// const float3 albedo = float3(0.8, 0.8, 0.8);
+		const float ambient = 0.008;
+
+		ray.origin = hit.position + hit.normal * 0.001f;
+		ray.direction = reflect(ray.direction, hit.normal);
+		ray.energy *= specular;
+
+		// Trace shadow ray
+		const Ray shadowRay = CreateRay(hit.position + hit.normal * 0.001f, -DirectionalLight.xyz);
+		const HitInfo shadowHitInfo = Trace(shadowRay);
+		if(shadowHitInfo.distance < DISTANCE_INFINITY) {
+			ray.energy = 0;
+			return albedo * ambient;
+		}
+		
+		return saturate(saturate(-dot(hit.normal, DirectionalLight.xyz)) * DirectionalLight.w * albedo + albedo*ambient);
+	}
+	
+	ray.energy = 0.0f;
+	return SampleSkybox(ray.direction);
 }
 
 [numthreads(8,8,1)]
@@ -61,7 +84,7 @@ void CSMain(uint3 id : SV_DispatchThreadID) {
 	Ray ray = CreateRayFromCamera(uv);
 
 	float3 result = float3(0, 0, 0);
-	[unroll] for(int i = 0; i < 16; i++) {
+	for(int i = 0; i < 8; i++) {
 		const HitInfo hitInfo = Trace(ray);
 		result += ray.energy * Shade(ray, hitInfo);
 

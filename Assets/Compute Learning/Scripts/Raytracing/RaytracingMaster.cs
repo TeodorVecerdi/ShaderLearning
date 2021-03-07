@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using NaughtyAttributes;
 using UnityCommons;
@@ -13,6 +14,7 @@ public class RaytracingMaster : MonoBehaviour {
     [SerializeField, Required] private Camera Camera;
     [SerializeField, Required] private RawImage Display;
     [Space, SerializeField] private Texture SkyboxTexture;
+    [SerializeField, Required] private Light DirectionalLight;
     [Space(20), ReadOnly, SerializeField] private string Duration;
 
     private RenderTexture targetTexture;
@@ -29,6 +31,7 @@ public class RaytracingMaster : MonoBehaviour {
     private bool lastFrameReady = true;
     
     private static readonly int antiAliasingSampleID = Shader.PropertyToID("_Sample");
+    private List<Transform> resetTransforms = new List<Transform>();
 
     private void Awake() {
         Resolution.Bake();
@@ -37,11 +40,16 @@ public class RaytracingMaster : MonoBehaviour {
         Display.texture = displayTexture;
 
         oldFieldOfView = Camera.fieldOfView;
+        resetTransforms.Add(Camera.transform);
+        resetTransforms.Add(DirectionalLight.transform);
     }
 
     private void Update() {
-        if (Camera.transform.hasChanged) {
-            Camera.transform.hasChanged = false;
+        
+        foreach (var resetTransform in resetTransforms) {
+            if (!resetTransform.hasChanged) continue;
+            
+            resetTransform.hasChanged = false;
             currentSample = 0;
         }
 
@@ -78,6 +86,9 @@ public class RaytracingMaster : MonoBehaviour {
         RaytracingShader.SetMatrix("CameraInverseProjection", Camera.projectionMatrix.inverse);
         RaytracingShader.SetTexture(0, "SkyboxTexture", SkyboxTexture);
         RaytracingShader.SetVector("PixelOffset", new Vector2(Rand.Float, Rand.Float));
+        
+        var direction = DirectionalLight.transform.forward;
+        RaytracingShader.SetVector("DirectionalLight", new Vector4(direction.x, direction.y, direction.z, DirectionalLight.intensity));
     }
 
     private void OnRender() {
