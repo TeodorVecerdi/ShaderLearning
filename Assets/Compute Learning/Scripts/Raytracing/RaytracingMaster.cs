@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
 using Debug = UnityEngine.Debug;
+using Random = UnityEngine.Random;
 
 public class RaytracingMaster : MonoBehaviour {
     [SerializeField] private ComputeShader RaytracingShader;
@@ -15,6 +16,15 @@ public class RaytracingMaster : MonoBehaviour {
     [SerializeField, Required] private RawImage Display;
     [Space, SerializeField] private Texture SkyboxTexture;
     [SerializeField, Required] private Light DirectionalLight;
+    [Space(10), SerializeField, Expandable, Required] private Scene Scene;
+    [Header("Random Settings")]
+    [SerializeField] private Vector2Int MaterialCountMinMax = new Vector2Int(5, 20);
+    [SerializeField] private float MetallicChance = 0.5f;
+    [SerializeField] private Vector2Int SphereCountMinMax = new Vector2Int(10, 30);
+    [SerializeField] private Vector2 SphereRadiusMinMax = new Vector2(3, 8);
+    [SerializeField] private float SpherePositionRadius = 100.0f;
+    [SerializeField] private float SpherePositionHeight = 10f;
+    
     [Space(20), ReadOnly, SerializeField] private string Duration;
 
     private RenderTexture targetTexture;
@@ -32,6 +42,9 @@ public class RaytracingMaster : MonoBehaviour {
     
     private static readonly int antiAliasingSampleID = Shader.PropertyToID("_Sample");
     private List<Transform> resetTransforms = new List<Transform>();
+    
+    private ComputeBuffer materialComputeBuffer;
+    private ComputeBuffer sphereComputeBuffer;
 
     private void Awake() {
         Resolution.Bake();
@@ -89,6 +102,9 @@ public class RaytracingMaster : MonoBehaviour {
         
         var direction = DirectionalLight.transform.forward;
         RaytracingShader.SetVector("DirectionalLight", new Vector4(direction.x, direction.y, direction.z, DirectionalLight.intensity));
+
+        RaytracingShader.SetBuffer(0, "CurrentScene.Materials", materialComputeBuffer);
+        RaytracingShader.SetBuffer(0, "CurrentScene.Spheres", sphereComputeBuffer);
     }
 
     private void OnRender() {
@@ -124,6 +140,47 @@ public class RaytracingMaster : MonoBehaviour {
         computeBuffer.SetData(data);
     }
 
+    private void GenerateMaterials() {
+        Scene.Materials.Clear();
+
+        var materialCount = Rand.Range(MaterialCountMinMax);
+        for (var i = 0; i < materialCount; i++) {
+            var material = new SceneMaterial();
+            var color = Random.ColorHSV();
+            var colorVector = new Vector3(color.r, color.g, color.b);
+            var isMetallic = Rand.Chance(MetallicChance);
+            var specular = Rand.Range(0.001f, 0.04f);
+            if (isMetallic) {
+                material.Albedo = colorVector * specular;
+                material.Specular = colorVector;
+            } else {
+                material.Albedo = colorVector;
+                material.Specular = colorVector * specular;
+            }
+            Scene.Materials.Add(material);
+        }
+
+        if (materialComputeBuffer != null) materialComputeBuffer.Release();
+        MakeBuffer(ref materialComputeBuffer, materialCount, Scene.Materials[0].Stride, Scene.Materials.ToArray());
+    }
+
+    private void GenerateSpheres() {
+        Scene.Spheres.Clear();
+
+        var sphereCount = Rand.Range(SphereCountMinMax);
+        for (var i = 0; i < sphereCount; i++) {
+            var sphere = new SceneSphere {
+                MaterialIndex = (uint) Rand.Range(Scene.Materials.Count),
+                Radius = Rand.Range(SphereRadiusMinMax),
+                Position = Rand.InsideUnitCircleVec3 * SpherePositionRadius + Vector3.up * Rand.Float * SpherePositionHeight
+            };
+            Scene.Spheres.Add(sphere);
+        }
+        
+        if (sphereComputeBuffer != null) sphereComputeBuffer.Release();
+        MakeBuffer(ref sphereComputeBuffer, sphereCount, Scene.Spheres[0].Stride, Scene.Spheres.ToArray());
+    }
+
     private void OnDestroy() {
         if (targetTexture != null) targetTexture.Release();
         if (displayTexture != null) displayTexture.Release();
@@ -132,10 +189,15 @@ public class RaytracingMaster : MonoBehaviour {
 
     private void OnEnable() {
         RenderPipelineManager.endFrameRendering += RenderPipelineManager_endFrameRendering;
+        GenerateMaterials();
+        GenerateSpheres();
+        currentSample = 0;
     }
 
     private void OnDisable() {
         RenderPipelineManager.endFrameRendering -= RenderPipelineManager_endFrameRendering;
+        if(materialComputeBuffer != null) materialComputeBuffer.Release();
+        if(sphereComputeBuffer != null) sphereComputeBuffer.Release();
     }
 
     private void RenderPipelineManager_endFrameRendering(ScriptableRenderContext context, Camera[] cameras) {

@@ -7,8 +7,8 @@ void IntersectGroundPlane(Ray ray, inout HitInfo bestHit, Plane plane) {
 		bestHit.distance = t;
 		bestHit.position = ray.origin + t * ray.direction;
 		bestHit.normal = float3(0, 1, 0);
-		bestHit.albedo = Materials[plane.materialIndex].albedo;
-		bestHit.specular = Materials[plane.materialIndex].specular;
+		bestHit.albedo = CurrentScene.Materials[plane.materialIndex].albedo;
+		bestHit.specular = CurrentScene.Materials[plane.materialIndex].specular;
 	}
 }
 
@@ -24,8 +24,9 @@ void IntersectSphere(Ray ray, inout HitInfo bestHit, Sphere sphere) {
 		bestHit.distance = t;
 		bestHit.position = ray.origin + t * ray.direction;
 		bestHit.normal = normalize(bestHit.position - sphere.position);
-		bestHit.albedo = Materials[sphere.materialIndex].albedo;
-		bestHit.specular = Materials[sphere.materialIndex].specular;
+		
+		bestHit.albedo = CurrentScene.Materials[sphere.materialIndex].albedo;
+		bestHit.specular = CurrentScene.Materials[sphere.materialIndex].specular;
 	}
 }
 

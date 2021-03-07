@@ -32,6 +32,11 @@ struct Material {
 	float3 specular;
 };
 
+struct Scene {
+	StructuredBuffer<Material> Materials;
+	StructuredBuffer<Sphere> Spheres;
+};
+
 static Ray CreateRay(const float3 origin, const float3 direction) {
 	Ray ray;
 	ray.origin = origin;
@@ -74,16 +79,15 @@ Material CreateMaterial(const float3 albedo, const float3 specular) {
 
 Ray CreateRayFromCamera(float2 uv) {
 	// transform camera to world space
-	float3 origin = mul(CameraToWorld, float4(0,0,0,1)).xyz;
+	const float3 origin = mul(CameraToWorld, float4(0, 0, 0, 1)).xyz;
 
 	// Invert the perspective projection
 	float3 direction = mul(CameraInverseProjection, float4(uv, 0, 1)).xyz;
 	// Transform the direction from camera space to world space and normalize
 	direction = mul(CameraToWorld, float4(direction, 0.0)).xyz;
 	direction = normalize(direction);
-	
+
 	return CreateRay(origin, direction);
 }
-
 
 #endif

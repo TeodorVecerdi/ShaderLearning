@@ -799,6 +799,13 @@ MonoBehaviour:
   Display: {fileID: 336117541}
   SkyboxTexture: {fileID: 2800000, guid: 15943df966320d947adb5599828701b7, type: 3}
   DirectionalLight: {fileID: 2122182017}
+  Scene: {fileID: 11400000, guid: 2d94c4d242ffa10418d73d35d01cadd0, type: 2}
+  MaterialCountMinMax: {x: 50, y: 200}
+  MetallicChance: 0.4
+  SphereCountMinMax: {x: 50, y: 200}
+  SphereRadiusMinMax: {x: 4, y: 10}
+  SpherePositionRadius: 200
+  SpherePositionHeight: 20
   Duration: 
 --- !u!1 &714675435
 GameObject:
