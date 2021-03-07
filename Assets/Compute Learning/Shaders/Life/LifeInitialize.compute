@@ -1,0 +1,20 @@
+#pragma kernel CSMain
+
+RWStructuredBuffer<int> StepCheckBuffer;
+
+RWTexture2D<float4> Game;
+float Seed;
+
+#include "../Utils/Random.cginc"
+
+[numthreads(8,8,1)]
+void CSMain(uint3 id : SV_DispatchThreadID) {
+	uint width, height;
+	Game.GetDimensions(width, height);
+	float2 uv = id.xy / float2(width, height);
+	
+	const float random = rand(uv + Seed);
+	Game[id.xy] = random < 0.7 ? 0.0f : 1.0f;
+	if(id.x + id.y == 0)
+		StepCheckBuffer[0] = 1;
+}

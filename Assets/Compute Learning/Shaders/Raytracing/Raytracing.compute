@@ -30,7 +30,7 @@ float3 SampleSkybox(float3 direction) {
 
 HitInfo Trace(Ray ray) {
 	HitInfo bestHit = CreateHitInfo();
-	// IntersectGroundPlane(ray, bestHit, CreatePlane(-4.0f, 0));
+	IntersectGroundPlane(ray, bestHit, CreatePlane(-6.0f, 0));
 
 	for (uint i = 0; i < SphereCount; i++) {
 		IntersectSphere(ray, bestHit, CurrentScene.Spheres[i]);
