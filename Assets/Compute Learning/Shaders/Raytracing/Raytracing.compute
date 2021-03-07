@@ -12,27 +12,42 @@ SamplerState samplerSkyboxTexture;
 
 static const float PI = 3.14159265f;
 static const float DISTANCE_INFINITY = 1000000000.0;
+static const float SKYBOX_INTENSITY = 1.0;
 
-#include "Structs.hlsli"
-#include "Intersections.hlsli"
+#include "Structs.cginc"
+#include "Intersections.cginc"
 
 float3 SampleSkybox(float3 direction) {
 	float theta = acos(direction.y) / -PI;
 	float phi = atan2(direction.x, -direction.z) / -PI * 0.5;
-	return SkyboxTexture.SampleLevel(samplerSkyboxTexture, float2(phi, theta), 0);
+	return SKYBOX_INTENSITY * SkyboxTexture.SampleLevel(samplerSkyboxTexture, float2(phi, theta), 0);
 }
 
 float3 Shade(inout Ray ray, HitInfo hit) {
 	if(hit.distance < DISTANCE_INFINITY) {
+		// const float3 specular = float3(1, 0.78, 0.33);
+		const float3 specular = float3(1, 1, 1);
+
+		ray.origin = hit.position + hit.normal * 0.001f;
+		ray.direction = reflect(ray.direction, hit.normal);
+		ray.energy *= specular;
+		
 		return hit.color;
 	}
+	
+	ray.energy = 0.0f;
 	return SampleSkybox(ray.direction);
 }
 
 HitInfo Trace(Ray ray) {
 	HitInfo bestHit = CreateHitInfo();
-	IntersectGroundPlane(ray, bestHit, 0);
-	IntersectSphere(ray, bestHit, CreateSphere(float3(-148.33, 1.54, -9.17), float3(0.2,0.7,0.1), 1.0f));
+	// IntersectGroundPlane(ray, bestHit, -2);
+	for(int x = 0; x < 4; x++) {
+		for (int y = 0; y < 4; y++) {
+			IntersectSphere(ray, bestHit, CreateSphere(float3(-148.33 + x * 13, 5.54, -9.17 + y * 13), float3(0.1,0.1,0.1), 6.0f));		
+		}
+	}
+	
 	return bestHit;
 }
 
@@ -44,9 +59,15 @@ void CSMain(uint3 id : SV_DispatchThreadID) {
 	// convert to [-1, 1] range
 	const float2 uv = float2((id.xy + PixelOffset) / float2(width, height) * 2.0 - 1.0);
 	Ray ray = CreateRayFromCamera(uv);
+
+	float3 result = float3(0, 0, 0);
+	[unroll] for(int i = 0; i < 16; i++) {
+		const HitInfo hitInfo = Trace(ray);
+		result += ray.energy * Shade(ray, hitInfo);
+
+		if(!any(ray.energy)) break;
+	}
 	
-	const HitInfo hitInfo = Trace(ray);
-	float3 result = Shade(ray, hitInfo);
 	Result[id.xy] = float4(result, 1);
 	
 	if(id.x == 0 && id.y == 0)
