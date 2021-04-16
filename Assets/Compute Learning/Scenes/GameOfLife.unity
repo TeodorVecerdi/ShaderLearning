@@ -400,18 +400,18 @@ MonoBehaviour:
     value: {x: 8, y: 8}
     bakedValue: {x: 0, y: 0}
   CellSize:
-    value: 8
+    value: 32
     bakedValue: 0
   DisplayShader: {fileID: 7200000, guid: 767d38bf24824d218a652c5b5a734608, type: 3}
   GameShader: {fileID: 7200000, guid: 6d9c0f3b2f0241f4a808fb1b5daf0092, type: 3}
   InitializeShader: {fileID: 7200000, guid: f74099f17ce749168685a1ca1661e257, type: 3}
   Display: {fileID: 336117541}
-  StepTime: 0.001
+  StepTime: 0.5
   Seed: 107.35
   RandomSeed: 1
   GridColor: {r: 0, g: 0, b: 0, a: 1}
-  CellColor: {r: 1, g: 0.3196501, b: 0, a: 1}
-  GridLineColor: {r: 0.071, g: 0.071, b: 0.071, a: 1}
+  CellColor: {r: 1, g: 1, b: 1, a: 1}
+  GridLineColor: {r: 0.3018868, g: 0.3018868, b: 0.3018868, a: 1}
   Duration: 
 --- !u!1 &1194485374
 GameObject:

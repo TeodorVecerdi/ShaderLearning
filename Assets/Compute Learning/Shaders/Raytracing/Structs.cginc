@@ -14,6 +14,8 @@ struct HitInfo {
 
 	float3 albedo;
 	float3 specular;
+	float3 emission;
+	float smoothness;
 };
 
 struct Sphere {

@@ -379,7 +379,7 @@ GameObject:
   - component: {fileID: 686050807}
   - component: {fileID: 686050808}
   m_Layer: 0
-  m_Name: Shaders
+  m_Name: Shader
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -415,19 +415,20 @@ MonoBehaviour:
   Resolution:
     value: {x: 1920, y: 1080, z: 24}
     bakedValue: {x: 0, y: 0, z: 0}
-  Samples: 256
+  Samples: 11002
   Camera: {fileID: 133192809}
   Display: {fileID: 336117541}
-  SkyboxTexture: {fileID: 2800000, guid: 08165ccef9ffa9e4da225902bdbedcca, type: 3}
+  SkyboxTexture: {fileID: 2800000, guid: dae3559986a8a784b9391a21c0f65fbc, type: 3}
   DirectionalLight: {fileID: 2122182017}
   Scene: {fileID: 11400000, guid: 2d94c4d242ffa10418d73d35d01cadd0, type: 2}
-  MaterialCountMinMax: {x: 25, y: 50}
-  MetallicChance: 0.5
+  Seed: 355
+  MaterialCountMinMax: {x: 25, y: 269}
+  MetallicChance: 0
   SpecularRange: {x: 0.005, y: 0.04}
-  SphereCountMinMax: {x: 100, y: 200}
-  SphereRadiusMinMax: {x: 4, y: 10}
-  SpherePositionRadius: 100
-  SpherePositionHeight: 20
+  SphereCountMinMax: {x: 10, y: 20}
+  SphereRadiusMinMax: {x: 4, y: 15}
+  SpherePositionRadius: 50
+  SpherePositionHeight: 10
   Duration: 
 --- !u!1 &1194485374
 GameObject:
@@ -477,11 +478,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
-  m_ScreenMatchMode: 0
+  m_ReferenceResolution: {x: 1920, y: 1080}
+  m_ScreenMatchMode: 2
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96

@@ -1,0 +1,18 @@
+#pragma kernel CSMain
+
+RWTexture2D<float4> Result;
+float Resolution;
+float Radius;
+float Time;
+float TimeSpeed;
+float SineMultiplier;
+
+[numthreads(8,8,1)]
+void CSMain(uint3 id : SV_DispatchThreadID) {
+	const float2 pos = id.xy / Resolution - 0.5;
+	const float newRadius = Radius + sin(Time * TimeSpeed) * SineMultiplier;
+	float circle = pos.x * pos.x + pos.y * pos.y - newRadius * newRadius;
+	circle /= newRadius * newRadius;
+	circle = 1-floor(circle);
+	Result[id.xy] = float4(circle, circle, circle, 1);
+}

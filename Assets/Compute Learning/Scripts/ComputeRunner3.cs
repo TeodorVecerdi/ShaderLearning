@@ -102,10 +102,10 @@ public abstract class ComputeRunner3 : MonoBehaviour {
         ComputeShader.SetTexture(kernelID, "Result", WorkingTexture);
         ComputeShader.SetInt("ResolutionX", resolution.x);
         ComputeShader.SetInt("ResolutionY", resolution.y);
+        ComputeShader.SetBuffer(kernelID, "RenderCheckBuffer", dummyRenderCheckBuffer);
         SetParameters(kernelID, ComputeShader);
         if (ParametersDirty) {
             ParametersDirty = false;
-            ComputeShader.SetBuffer(kernelID, "RenderCheckBuffer", dummyRenderCheckBuffer);
             SetParametersOnce(kernelID, ComputeShader);
         }
 

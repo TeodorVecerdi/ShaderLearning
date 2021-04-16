@@ -21,7 +21,8 @@ public class RaytracingMaster : MonoBehaviour {
     [SerializeField, Required] private Light DirectionalLight;
     [Space(10), SerializeField, Expandable, Required] private Scene Scene;
     [Header("Random Settings")]
-    [SerializeField] private Vector2Int MaterialCountMinMax = new Vector2Int(5, 20);
+    [SerializeField] private int Seed = 0;
+    [Space, SerializeField] private Vector2Int MaterialCountMinMax = new Vector2Int(5, 20);
     [SerializeField] private float MetallicChance = 0.5f;
     [SerializeField] private Vector2 SpecularRange = new Vector2(0, 0.002f);
     [SerializeField] private Vector2Int SphereCountMinMax = new Vector2Int(10, 30);
@@ -34,6 +35,7 @@ public class RaytracingMaster : MonoBehaviour {
 
     private RenderTexture targetTexture;
     private RenderTexture displayTexture;
+    private RenderTexture convergeTexture;
     private ComputeBuffer dummyRenderCheckBuffer;
     private readonly int[] renderCheckBufferData = {0};
 
@@ -106,7 +108,7 @@ public class RaytracingMaster : MonoBehaviour {
         RaytracingShader.SetMatrix("CameraInverseProjection", Camera.projectionMatrix.inverse);
         RaytracingShader.SetTexture(0, "SkyboxTexture", SkyboxTexture);
         RaytracingShader.SetVector("PixelOffset", new Vector2(Rand.Float, Rand.Float));
-        
+        RaytracingShader.SetFloat("Sample", currentSample);
         var direction = DirectionalLight.transform.forward;
         RaytracingShader.SetVector("DirectionalLight", new Vector4(direction.x, direction.y, direction.z, DirectionalLight.intensity));
 
@@ -119,11 +121,12 @@ public class RaytracingMaster : MonoBehaviour {
             if (request.hasError) Debug.Log("<b>AsyncGPUReadback.Request(dummyRenderCheckBuffer)</b> has error");
             lastFrameReady = true;
 
-            if (antiAliasingMaterial == null) antiAliasingMaterial = new Material(Shader.Find("Hidden/RaytracingAA"));
+            if (antiAliasingMaterial == null) antiAliasingMaterial = new Material(Shader.Find("Raytracing/Average"));
             antiAliasingMaterial.SetFloat(antiAliasingSampleID, currentSample);
             currentSample++;
             
-            Graphics.Blit(targetTexture, displayTexture, antiAliasingMaterial);
+            Graphics.Blit(targetTexture, displayTexture);
+            // Graphics.Blit(convergeTexture, displayTexture);
         });
     }
 
@@ -131,6 +134,7 @@ public class RaytracingMaster : MonoBehaviour {
         var copy = Resolution.Value;
         copy.z = 0;
         MakeTexture(ref targetTexture, copy, RenderTextureFormat.ARGBFloat);
+        MakeTexture(ref convergeTexture, copy, RenderTextureFormat.ARGBFloat);
         MakeTexture(ref displayTexture, copy, RenderTextureFormat.ARGBFloat);
     }
 
@@ -153,15 +157,14 @@ public class RaytracingMaster : MonoBehaviour {
         var materialCount = Rand.Range(MaterialCountMinMax);
         for (var i = 0; i < materialCount; i++) {
             var material = new SceneMaterial();
-            var color = Random.ColorHSV();
-            var colorVector = new Vector3(color.r, color.g, color.b);
+            var color = new Vector3(Rand.Float, Rand.Float, Rand.Float);
             var isMetallic = Rand.Chance(MetallicChance);
             var specular = Rand.Range(SpecularRange);
             if (isMetallic) {
-                material.Albedo = colorVector * specular;
-                material.Specular = colorVector;
+                material.Albedo = color * specular;
+                material.Specular = color;
             } else {
-                material.Albedo = colorVector;
+                material.Albedo = color;
                 material.Specular = Vector3.zero;
             }
             Scene.Materials.Add(material);
@@ -191,13 +194,16 @@ public class RaytracingMaster : MonoBehaviour {
     private void OnDestroy() {
         if (targetTexture != null) targetTexture.Release();
         if (displayTexture != null) displayTexture.Release();
+        if (convergeTexture != null) convergeTexture.Release();
         if (dummyRenderCheckBuffer != null) dummyRenderCheckBuffer.Release();
     }
 
     private void OnEnable() {
         RenderPipelineManager.endFrameRendering += RenderPipelineManager_endFrameRendering;
+        Rand.PushState(Seed);
         GenerateMaterials();
         GenerateSpheres();
+        Rand.PopState();
         currentSample = 0;
     }
 

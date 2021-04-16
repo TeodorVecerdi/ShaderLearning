@@ -621,7 +621,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 686050807}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &393982828
 MonoBehaviour:
@@ -646,6 +646,60 @@ MonoBehaviour:
   EdgeColor: {r: 0, g: 0, b: 0, a: 1}
   LookupDistance: 3
   MinDistance: 0.1
+--- !u!1 &435929437
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 435929438}
+  - component: {fileID: 435929439}
+  m_Layer: 0
+  m_Name: Vignette
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &435929438
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 435929437}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 686050807}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &435929439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 435929437}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0159ea3b9e274393a5fbe28734ed66fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RenderTime: 0
+  Active: 1
+  TargetDisplay: {fileID: 336117541}
+  SourceRenderer: {fileID: 133192809}
+  ComputeShader: {fileID: 7200000, guid: 5fbce020b1ff408f9e2f91823ddf1acc, type: 3}
+  Resolution: {x: 2048, y: 1024, z: 32}
+  ThreadGroupSize: {x: 8, y: 8}
+  CopyShader: {fileID: 7200000, guid: c315f96d44f94b59babd57a70c3acee2, type: 3}
+  Intensity: 0.55
+  Radius: 0.2
+  Color: {r: 0.05, g: 0.05, b: 0.05, a: 1}
 --- !u!1 &593829078
 GameObject:
   m_ObjectHideFlags: 0
@@ -914,6 +968,7 @@ Transform:
   m_Children:
   - {fileID: 151772889}
   - {fileID: 195717041}
+  - {fileID: 435929438}
   - {fileID: 393982827}
   - {fileID: 1271795603}
   m_Father: {fileID: 0}
@@ -1483,7 +1538,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 686050807}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1271795604
 MonoBehaviour:
@@ -1498,7 +1553,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RenderTime: 0
-  Active: 1
+  Active: 0
   TargetDisplay: {fileID: 336117541}
   SourceRenderer: {fileID: 133192809}
   ComputeShader: {fileID: 7200000, guid: c6342bf4dcba485b9cdbc027efbcc038, type: 3}

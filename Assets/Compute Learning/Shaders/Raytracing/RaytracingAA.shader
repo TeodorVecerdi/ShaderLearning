@@ -1,4 +1,4 @@
-Shader "Hidden/RaytracingAA"
+Shader "Raytracing/Average"
 {
     Properties
     {
@@ -9,7 +9,7 @@ Shader "Hidden/RaytracingAA"
         // No culling or depth
         Cull Off ZWrite Off ZTest Always
         Blend SrcAlpha OneMinusSrcAlpha
-
+        
         Pass
         {
             CGPROGRAM
@@ -39,7 +39,8 @@ Shader "Hidden/RaytracingAA"
             float _Sample;
 
             float4 frag(v2f i) : SV_Target {
-                return float4(tex2D(_MainTex, i.uv).rgb, 1.0f / (_Sample + 1.0f));
+                float currentAlpha =  1.0f / (_Sample + 1.0f);
+                return float4(tex2D(_MainTex, i.uv).rgb, currentAlpha);
             }
             ENDCG
         }

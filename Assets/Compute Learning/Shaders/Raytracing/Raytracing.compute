@@ -6,6 +6,7 @@ RWTexture2D<float4> Result;
 float4x4 CameraToWorld;
 float4x4 CameraInverseProjection;
 float4 DirectionalLight;
+float Sample;
 
 float2 PixelOffset;
 
@@ -16,6 +17,8 @@ static const float PI = 3.14159265f;
 static const float DISTANCE_INFINITY = 1000000000.0;
 static const float SKYBOX_INTENSITY = 1.0;
 
+#include "../Utils/Random.cginc"
+#include "Math.cginc"
 #include "Structs.cginc"
 Scene CurrentScene;
 #include "Intersections.cginc"
@@ -30,7 +33,7 @@ float3 SampleSkybox(float3 direction) {
 
 HitInfo Trace(Ray ray) {
 	HitInfo bestHit = CreateHitInfo();
-	IntersectGroundPlane(ray, bestHit, CreatePlane(-6.0f, 0));
+	IntersectGroundPlane(ray, bestHit, CreatePlane(-6.0f, 0)); 
 
 	for (uint i = 0; i < SphereCount; i++) {
 		IntersectSphere(ray, bestHit, CurrentScene.Spheres[i]);
@@ -41,23 +44,11 @@ HitInfo Trace(Ray ray) {
 
 float3 Shade(inout Ray ray, HitInfo hit) {
 	if (hit.distance < DISTANCE_INFINITY) {
-		const float3 specular = hit.specular;
-		const float3 albedo = hit.albedo;
-		const float ambient = 0.05;
+		ray.origin = hit.position + hit.normal * 0.01f;
+		ray.direction = SampleHemisphere(hit.normal);
+		ray.energy *= 2.0f * hit.albedo * sdot(hit.normal, ray.direction);
 
-		ray.origin = hit.position + hit.normal * 0.001f;
-		ray.direction = reflect(ray.direction, hit.normal);
-		ray.energy *= specular;
-
-		// Trace shadow ray
-		const Ray shadowRay = CreateRay(hit.position + hit.normal * 0.001f, -DirectionalLight.xyz);
-		const HitInfo shadowHitInfo = Trace(shadowRay);
-		if (shadowHitInfo.distance < DISTANCE_INFINITY) {
-			ray.energy = 0;
-			return albedo * ambient;
-		}
-
-		return saturate(saturate(-dot(hit.normal, DirectionalLight.xyz)) * DirectionalLight.w * albedo + albedo * ambient);
+		return 0.0f;
 	}
 
 	ray.energy = 0.0f;
@@ -66,23 +57,31 @@ float3 Shade(inout Ray ray, HitInfo hit) {
 
 [numthreads(32, 16, 1)]
 void CSMain(uint3 id : SV_DispatchThreadID) {
+	RANDOM__Seed = 0.01;
+	RANDOM__Pixel = id.xy;
+	
 	uint width, height, stride;
 	Result.GetDimensions(width, height);
 	CurrentScene.Spheres.GetDimensions(SphereCount, stride);
 
-	// convert to [-1, 1] range
-	const float2 uv = float2((id.xy + PixelOffset) / float2(width, height) * 2.0 - 1.0);
-	Ray ray = CreateRayFromCamera(uv);
-
+	const int samples = 132;
 	float3 result = float3(0, 0, 0);
-	for (int i = 0; i < 4; i++) {
-		const HitInfo hitInfo = Trace(ray);
-		result += ray.energy * Shade(ray, hitInfo);
+	for (int i = 0; i < samples; i++) {
+		// convert to [-1, 1] range
+		const float2 uv = float2((id.xy + PixelOffset) / float2(width, height) * 2.0f - 1.0f);
+		Ray ray = CreateRayFromCamera(uv);
 
-		if (!any(ray.energy)) break;
+		for (int rays = 0; rays < 4; rays++) {
+			const HitInfo hitInfo = Trace(ray);
+			result += ray.energy * Shade(ray, hitInfo);
+
+			if (!any(ray.energy))
+				break;
+		}
 	}
-
-	Result[id.xy] = float4(result, 1);
+	result /= samples;
+	
+	Result[id.xy] = float4(result, 1.0);
 
 	if (id.x == 0 && id.y == 0)
 		RenderCheckBuffer[0] = 1;
