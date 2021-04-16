@@ -1,0 +1,27 @@
+#pragma kernel CSMain
+
+#include "../Utils/Math.cginc"
+
+RWStructuredBuffer<int> RenderCheckBuffer;
+RWTexture2D<float4> Result;
+RWTexture2D<float4> VignetteTexture;
+float4 Color;
+float Intensity = 0.25;
+float Radius = 3.0;
+int Width;
+int Height;
+static int2 Size = int2(Width, Height);
+
+[numthreads(8,8,1)]
+void CSMain(uint3 id : SV_DispatchThreadID) {
+	float2 pos = id.xy / float2(Size);
+	float alpha = Color.a;
+	Color.a = 1;
+	Radius = clamp(Radius, -1, 1);
+	float dist = pow(1-SqrDistance(pos, float2(0.5, 0.5)), -Intensity / Radius);
+	float intensity = clamp(Radius * dist, 0, 1) * alpha;
+	VignetteTexture[id.xy] = (1-intensity) * Result[id.xy] + Color * intensity;
+
+	if(id.x+id.y == 0)
+		RenderCheckBuffer[0] = 1;
+}

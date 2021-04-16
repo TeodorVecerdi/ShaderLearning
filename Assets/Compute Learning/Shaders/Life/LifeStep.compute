@@ -1,0 +1,48 @@
+#pragma kernel CSMain
+
+RWStructuredBuffer<int> StepCheckBuffer;
+
+RWTexture2D<float4> Game;
+RWTexture2D<float4> WorkingGame;
+
+uint width, height;
+
+int umod(int val, int max) {
+	if(val < 0) return val + max;
+	if(val >= max) return val - max;
+	return val;
+}
+
+bool IsCell(uint2 coord) {
+	coord.x = umod(coord.x, width);
+	coord.y = umod(coord.y, height);
+	return Game[coord].r == 1.0f;
+}
+
+int NeighbourCount(uint2 coord) {
+	int count = 0;
+	[unroll] for(int x = -1; x <= 1; x++) {
+		[unroll] for(int y = -1; y <= 1; y++) {
+			if(x == 0 && y == 0) continue;
+			if(IsCell(coord + int2(x, y))) count++;
+		}
+	}
+	return count;
+}
+
+[numthreads(8,8,1)]
+void CSMain(uint3 id : SV_DispatchThreadID) {
+	Game.GetDimensions(width, height);
+
+	const bool isCell = IsCell(id.xy);
+	const int neighbourCount = NeighbourCount(id.xy);
+	if(isCell && (neighbourCount == 2 || neighbourCount == 3)) {}
+	else if(!isCell && neighbourCount == 3) {
+		WorkingGame[id.xy] = 1.0f;	
+	} else {
+		WorkingGame[id.xy] = 0.0f;
+	}
+	
+	if(id.x + id.y == 0)
+		StepCheckBuffer[0] = 1;
+}

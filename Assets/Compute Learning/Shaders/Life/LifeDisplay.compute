@@ -1,0 +1,30 @@
+#pragma kernel CSMain
+
+RWStructuredBuffer<int> RenderCheckBuffer;
+
+RWTexture2D<float4> Result;
+RWTexture2D<float4> Game;
+uint CellSize;
+
+float3 GridColor;
+float3 CellColor;
+float3 GridLineColor;
+
+[numthreads(8,8,1)]
+void CSMain(uint3 id : SV_DispatchThreadID) {
+	bool isCell = Game[id.xy] == 1.0f;
+	for (int x = 0; x < CellSize; x++) {
+		for (int y = 0; y < CellSize; y++) {
+			const uint2 currentPixel = id.xy * CellSize + uint2(x,y);
+
+			Result[currentPixel] = isCell ? float4(CellColor, 1.0f) : float4(GridColor, 1.0f);
+
+			if(x == 0 || y == 0) {
+				Result[currentPixel] = float4(GridLineColor, 1.0f);
+			}
+		}
+	}
+	
+	if(id.x + id.y == 0)
+		RenderCheckBuffer[0] = 1;
+}
