@@ -400,7 +400,7 @@ MonoBehaviour:
     value: {x: 8, y: 8}
     bakedValue: {x: 0, y: 0}
   CellSize:
-    value: 32
+    value: 16
     bakedValue: 0
   DisplayShader: {fileID: 7200000, guid: 767d38bf24824d218a652c5b5a734608, type: 3}
   GameShader: {fileID: 7200000, guid: 6d9c0f3b2f0241f4a808fb1b5daf0092, type: 3}

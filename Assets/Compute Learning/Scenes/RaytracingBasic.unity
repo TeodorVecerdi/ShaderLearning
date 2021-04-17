@@ -425,7 +425,7 @@ MonoBehaviour:
   MaterialCountMinMax: {x: 50, y: 100}
   MetallicChance: 0.4
   SpecularRange: {x: 0, y: 0.002}
-  SphereCountMinMax: {x: 25, y: 100}
+  SphereCountMinMax: {x: 50, y: 100}
   SphereRadiusMinMax: {x: 4, y: 12}
   SpherePositionRadius: 125
   SpherePositionHeight: 10

@@ -690,7 +690,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RenderTime: 0
-  Active: 1
+  Active: 0
   TargetDisplay: {fileID: 336117541}
   SourceRenderer: {fileID: 133192809}
   ComputeShader: {fileID: 7200000, guid: 5fbce020b1ff408f9e2f91823ddf1acc, type: 3}
@@ -1553,15 +1553,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RenderTime: 0
-  Active: 0
+  Active: 1
   TargetDisplay: {fileID: 336117541}
   SourceRenderer: {fileID: 133192809}
   ComputeShader: {fileID: 7200000, guid: c6342bf4dcba485b9cdbc027efbcc038, type: 3}
   Resolution: {x: 2048, y: 1024, z: 32}
   ThreadGroupSize: {x: 8, y: 8}
-  KernelSize: 9
-  BlurAmount: 5
-  DownSamplingPower: 4
+  KernelSize: 31
+  BlurAmount: 2
+  DownSamplingPower: 3
   kernel: []
 --- !u!1 &1290052925
 GameObject:
